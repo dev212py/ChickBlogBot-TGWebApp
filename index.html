@@ -1,11 +1,263 @@
 <!DOCTYPE html>
-<style>
-  body {
-    background-color: #313131;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-</style>
-<div class="title"></div>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHICKEN GUN NEWS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #313131;
+            min-height: 100vh;
+            flex-direction: column;
+            display: flex;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 128px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: bold;
+        }
+
+        .description {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9a9a9a;
+            text-align: center;
+            font-size: 32px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: lighter;
+        }
+
+        .container-1 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        /* Общий стиль для всех кнопок категорий */
+        .category-btn {
+            padding: 10px 20px;
+            height: 47px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: lighter;
+            background-color: #313131;
+            border: 1px solid #4a4a4a;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .category-btn:hover {
+            background-color: #4a4a4a;
+            transform: translateY(-2px);
+        }
+
+        .category-btn.active {
+            background-color: #6b6b6b;
+            border-color: #9a9a9a;
+            font-weight: bold;
+        }
+
+        .category-1 { width: 250px; }
+        .category-2 { width: 250px; }
+        .category-3 { width: 150px; }
+        .category-4 { width: 350px; }
+
+        /* НОВОСТНОЙ ВИДЖЕТ СО СКРОЛЛОМ */
+        .news-widget {
+            height: 400px;
+            padding: 20px;
+            overflow-y: auto;
+            color: white;
+            border: 1px solid #3d3d3d;
+            border-radius: 10px;
+            background-color: #2a2a2a;
+            margin: 20px 0;
+        }
+
+        /* Стилизация скроллбара для виджета */
+        .news-widget::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .news-widget::-webkit-scrollbar-track {
+            background: #3d3d3d;
+            border-radius: 10px;
+        }
+
+        .news-widget::-webkit-scrollbar-thumb {
+            background: #6b6b6b;
+            border-radius: 10px;
+        }
+
+        .news-widget::-webkit-scrollbar-thumb:hover {
+            background: #9a9a9a;
+        }
+
+        /* Стили для новостных карточек */
+        .news-card {
+            background-color: #3d3d3d;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+
+        .news-card:hover {
+            transform: translateX(5px);
+            background-color: #4a4a4a;
+        }
+
+        .news-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #ffd966;
+        }
+
+        .news-description {
+            font-size: 14px;
+            color: #cccccc;
+            line-height: 1.4;
+        }
+
+        .news-date {
+            font-size: 12px;
+            color: #9a9a9a;
+            margin-top: 8px;
+        }
+
+        .footer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #626262;
+            font-size: 32px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: lighter;
+            background-color: #313131;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="title">Приветствую!</div>
+<div class="description">Рад видеть тебя в новой предложке @chickengunblog!</div>
+<div class="description">Исследуй сообщество и делись своими новостями</div>
+
+<div class="container-1">
+    <button class="category-btn category-1" data-category="concepts">Концепты</button>
+    <button class="category-btn category-2" data-category="builds">Постройки</button>
+    <button class="category-btn category-3" data-category="arts">Арты</button>
+    <button class="category-btn category-4" id="suggestBtn">Предложить новость</button>
+</div>
+
+<!-- НОВОСТНОЙ ВИДЖЕТ СО СКРОЛЛОМ -->
+<div class="news-widget" id="newsWidget">
+    <!-- Контент будет загружаться сюда динамически -->
+</div>
+
+<div class="footer">Сайт создал hwbwcs, приятного использования</div>
+
+<script>
+    const newsData = {
+        concepts: [
+            { title: "Концепт персонажа", description: "дилдо рубящий планеты", date: "2026-01-20" },
+            { title: "Концепт ук", description: "костюм скибиди туалета", date: "2026-01-25" },
+            { title: "Концепт транспорта", description: "пелемень с крыльями", date: "2026-02-01" },
+        ],
+        builds: [
+            { title: "Космодром", description: "Стартовая площадка для ракет с курицами", date: "2026-02-07" }
+        ],
+        arts: [
+            { title: "Арт: ававывф", description: "гречка2кг", date: "2026-01-12" },
+        ]
+    };
+
+    // Функция отображения новостей в виджете
+    function displayNews(category) {
+        const widget = document.getElementById('newsWidget');
+        const news = newsData[category];
+        
+        if (!news) {
+            widget.innerHTML = '<div class="news-card">Новостей пока нет</div>';
+            return;
+        }
+        
+        let html = '';
+        news.forEach(item => {
+            html += `
+                <div class="news-card">
+                    <div class="news-title">📢 ${item.title}</div>
+                    <div class="news-description">${item.description}</div>
+                    <div class="news-date">📅 ${item.date}</div>
+                </div>
+            `;
+        });
+        
+        widget.innerHTML = html;
+        
+        widget.scrollTop = 0;
+    }
+
+    function setActiveButton(activeBtn) {
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        activeBtn.classList.add('active');
+    }
+    
+    document.querySelectorAll('[data-category]').forEach(button => {
+        button.addEventListener('click', () => {
+            const category = button.getAttribute('data-category');
+            displayNews(category);
+            setActiveButton(button);
+        });
+    });
+    
+    document.getElementById('suggestBtn').addEventListener('click', () => {
+        const newsText = prompt('📝 Введите вашу новость:');
+        if (newsText && newsText.trim()) {
+            const activeCategory = document.querySelector('.category-btn.active')?.getAttribute('data-category') || 'concepts';
+            const newNews = {
+                title: "Предложенная новость",
+                description: newsText,
+                date: new Date().toISOString().split('T')[0]
+            };
+            newsData[activeCategory].unshift(newNews);
+            displayNews(activeCategory);
+            alert('✅ Спасибо! Новость добавлена!');
+        }
+    });
+    
+    // Отображаем концепты по умолчанию
+    displayNews('concepts');
+    document.querySelector('[data-category="concepts"]').classList.add('active');
+</script>
+
+</body>
 </html>
