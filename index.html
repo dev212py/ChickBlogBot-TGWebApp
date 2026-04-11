@@ -385,33 +385,41 @@
 </div>
 
 <script>
-    // ========== ШИФРОВАНИЕ ==========
-    const SECRET_KEY = 'cg_secure_key_2026_hwbwcs';
-    
-    function encrypt(text) {
-        if (!text) return '';
-        let result = '';
-        for (let i = 0; i < text.length; i++) {
-            let charCode = text.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length);
-            result += String.fromCharCode(charCode);
+    // ========== ИСПРАВЛЕННОЕ ШИФРОВАНИЕ (поддержка кириллицы) ==========
+const SECRET_KEY = 'cg_secure_key_2026_hwbwcs';
+
+function encrypt(text) {
+    if (!text) return '';
+    try {
+        // Кодируем UTF-8 в Base64
+        let utf8Bytes = unescape(encodeURIComponent(text));
+        let binary = '';
+        for (let i = 0; i < utf8Bytes.length; i++) {
+            let charCode = utf8Bytes.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length);
+            binary += String.fromCharCode(charCode);
         }
-        return btoa(result);
+        return btoa(binary);
+    } catch(e) {
+        console.error('Encrypt error:', e);
+        return '';
     }
-    
-    function decrypt(encrypted) {
-        if (!encrypted) return '';
-        try {
-            let decoded = atob(encrypted);
-            let result = '';
-            for (let i = 0; i < decoded.length; i++) {
-                let charCode = decoded.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length);
-                result += String.fromCharCode(charCode);
-            }
-            return result;
-        } catch(e) {
-            return '';
+}
+
+function decrypt(encrypted) {
+    if (!encrypted) return '';
+    try {
+        let binary = atob(encrypted);
+        let utf8Bytes = '';
+        for (let i = 0; i < binary.length; i++) {
+            let charCode = binary.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length);
+            utf8Bytes += String.fromCharCode(charCode);
         }
+        return decodeURIComponent(escape(utf8Bytes));
+    } catch(e) {
+        console.error('Decrypt error:', e);
+        return '';
     }
+}
     
     // ========== ДАННЫЕ ==========
     let CURRENT_USER = null;
