@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chicken Gun Community</title>
+    <title>CHICKEN GUN COMMUNITY</title>
     <style>
         * {
             margin: 0;
@@ -18,13 +18,13 @@
             min-height: 100vh;
         }
 
-        /* Верхняя стеклянная панель (фиксированная) */
+        /* Верхняя стеклянная панель */
         .glass-navbar {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            background: rgba(20, 20, 20, 0.75);
+            background: rgba(20, 20, 20, 0.85);
             backdrop-filter: blur(16px) saturate(180%);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
@@ -49,17 +49,14 @@
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            letter-spacing: 1px;
         }
 
-        /* Контейнер кнопок категорий */
         .nav-buttons {
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
         }
 
-        /* Стеклянные кнопки */
         .glass-btn {
             background: rgba(30, 30, 30, 0.7);
             backdrop-filter: blur(5px);
@@ -68,27 +65,22 @@
             padding: 8px 20px;
             border-radius: 40px;
             font-size: 15px;
-            font-weight: 500;
             cursor: pointer;
             transition: all 0.25s ease;
-            letter-spacing: 0.3px;
         }
 
         .glass-btn:hover {
             background: rgba(60, 60, 60, 0.8);
             border-color: rgba(255, 255, 255, 0.25);
             transform: translateY(-2px);
-            color: white;
         }
 
         .glass-btn.active {
             background: rgba(80, 80, 80, 0.9);
             border-color: #6b6b6b;
             color: white;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
-        /* Правая группа кнопок (добавить + настройки) */
         .action-buttons {
             display: flex;
             gap: 10px;
@@ -104,7 +96,6 @@
             border-radius: 50%;
             font-size: 20px;
             cursor: pointer;
-            transition: all 0.25s ease;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -113,17 +104,14 @@
         .icon-btn:hover {
             background: rgba(80, 80, 80, 0.8);
             transform: scale(1.05);
-            color: white;
         }
 
-        /* Основной контент с отступом от фиксированной панели */
         .main-content {
             max-width: 1200px;
             margin: 0 auto;
             padding: 100px 24px 40px 24px;
         }
 
-        /* Виджет со скроллом */
         .content-widget {
             background: rgba(25, 25, 25, 0.6);
             backdrop-filter: blur(8px);
@@ -133,57 +121,58 @@
             max-height: 65vh;
             overflow-y: auto;
             padding: 20px;
-            transition: all 0.3s;
         }
 
-        /* Кастомный скроллбар */
         .content-widget::-webkit-scrollbar {
             width: 8px;
         }
-
         .content-widget::-webkit-scrollbar-track {
             background: rgba(30, 30, 30, 0.5);
             border-radius: 10px;
         }
-
         .content-widget::-webkit-scrollbar-thumb {
             background: #5a5a5a;
             border-radius: 10px;
         }
 
-        .content-widget::-webkit-scrollbar-thumb:hover {
-            background: #7a7a7a;
-        }
-
-        /* Карточки контента */
-        .content-card {
+        .post-card {
             background: rgba(35, 35, 35, 0.8);
             border-radius: 16px;
             padding: 20px;
             margin-bottom: 16px;
             border-left: 3px solid #6b6b6b;
+            cursor: pointer;
             transition: all 0.2s;
         }
 
-        .content-card:hover {
+        .post-card:hover {
             background: rgba(45, 45, 45, 0.9);
             transform: translateX(5px);
         }
 
-        .card-title {
+        .post-title {
             font-size: 20px;
             font-weight: bold;
             color: #d4d4d4;
             margin-bottom: 8px;
         }
 
-        .card-desc {
+        .post-desc {
             font-size: 14px;
             color: #aaa;
             line-height: 1.5;
         }
 
-        .card-meta {
+        .post-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 12px;
+            margin: 12px 0;
+            cursor: pointer;
+            object-fit: cover;
+        }
+
+        .post-meta {
             font-size: 12px;
             color: #777;
             margin-top: 12px;
@@ -192,7 +181,7 @@
             align-items: center;
         }
 
-        .delete-item {
+        .delete-post {
             background: rgba(180, 60, 60, 0.6);
             border: none;
             color: white;
@@ -200,11 +189,21 @@
             border-radius: 8px;
             cursor: pointer;
             font-size: 11px;
-            transition: 0.2s;
         }
 
-        .delete-item:hover {
+        .delete-post:hover {
             background: rgba(220, 70, 70, 0.9);
+        }
+
+        .comments-link {
+            color: #9a9a9a;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .comments-link:hover {
+            color: #ffd966;
         }
 
         .empty-state {
@@ -213,19 +212,20 @@
             color: #777;
         }
 
-        /* Модальное окно */
+        /* Модальное окно поста */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(12px);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 2000;
+            padding: 20px;
         }
 
         .modal-box {
@@ -233,86 +233,90 @@
             border-radius: 24px;
             padding: 30px;
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
             border: 1px solid #4a4a4a;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
         }
 
         .modal-box h3 {
             color: white;
             margin-bottom: 20px;
-            font-size: 24px;
         }
 
-        .modal-box input, .modal-box textarea, .modal-box select {
-            width: 100%;
+        .full-image {
+            max-width: 100%;
+            border-radius: 16px;
+            margin: 15px 0;
+            cursor: zoom-out;
+        }
+
+        .comments-section {
+            margin-top: 20px;
+            border-top: 1px solid #4a4a4a;
+            padding-top: 20px;
+        }
+
+        .comment {
+            background: #1e1e1e;
+            border-radius: 12px;
             padding: 12px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+        }
+
+        .comment-author {
+            color: #ffd966;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .comment-text {
+            color: #bbb;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .add-comment {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .add-comment input {
+            flex: 1;
+            padding: 10px;
             background: #1e1e1e;
             border: 1px solid #4a4a4a;
             color: white;
             border-radius: 12px;
-            font-size: 14px;
         }
 
-        .modal-box textarea {
-            min-height: 100px;
-            resize: vertical;
+        .add-comment button {
+            background: #4a4a4a;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
         }
 
-        .modal-actions {
-            display: flex;
-            gap: 12px;
+        .modal-close {
+            background: #6b6b6b;
             margin-top: 20px;
-        }
-
-        .modal-actions button {
-            flex: 1;
+            width: 100%;
             padding: 12px;
             border: none;
             border-radius: 12px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .btn-submit {
-            background: #4a4a4a;
             color: white;
-        }
-
-        .btn-submit:hover {
-            background: #6a6a6a;
-        }
-
-        .btn-cancel {
-            background: #3a3a3a;
-            color: #ccc;
-        }
-
-        @media (max-width: 768px) {
-            .navbar-container {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .nav-buttons, .action-buttons {
-                justify-content: center;
-            }
-            .main-content {
-                padding-top: 140px;
-            }
-            .glass-btn {
-                padding: 6px 14px;
-                font-size: 13px;
-            }
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-<!-- Верхняя стеклянная панель -->
 <div class="glass-navbar">
     <div class="navbar-container">
-        <div class="logo">⚡ CHICKEN GUN</div>
+        <div class="logo">CG COMMUNITY</div>
         <div class="nav-buttons" id="categoryButtons">
             <button class="glass-btn" data-cat="arts">🎨 Арты</button>
             <button class="glass-btn" data-cat="buildings">🏗️ Постройки</button>
@@ -325,7 +329,6 @@
     </div>
 </div>
 
-<!-- Основной контент -->
 <div class="main-content">
     <div class="content-widget" id="contentWidget">
         <div class="empty-state">✨ Выберите категорию и добавьте первый пост</div>
@@ -333,7 +336,7 @@
 </div>
 
 <script>
-    // ========== ДАННЫЕ И ХРАНИЛИЩЕ ==========
+    // ========== ДАННЫЕ (только пользовательские, без тестов) ==========
     let currentCategory = 'arts';
     let contentData = {
         arts: [],
@@ -341,9 +344,8 @@
         concepts: []
     };
 
-    // Загрузка данных
     function loadData() {
-        const saved = localStorage.getItem('chicken_gun_dark_data');
+        const saved = localStorage.getItem('chicken_gun_final_data');
         if (saved) {
             try {
                 const parsed = JSON.parse(saved);
@@ -352,68 +354,42 @@
                 }
             } catch(e) {}
         }
-        
-        // Примеры данных, если пусто
-        if (contentData.arts.length === 0) {
-            contentData.arts = [
-                { id: Date.now(), title: "Курица-киборг", desc: "Лазерные глаза и механические крылья", author: "hwbwcs", date: new Date().toLocaleDateString() },
-                { id: Date.now()+1, title: "Тёмный воин", desc: "Арт в мрачных тонах", author: "Artist", date: new Date().toLocaleDateString() }
-            ];
-        }
-        if (contentData.buildings.length === 0) {
-            contentData.buildings = [
-                { id: Date.now()+2, title: "Крепость Теней", desc: "Неприступная база в горах", author: "Builder", date: new Date().toLocaleDateString() }
-            ];
-        }
-        if (contentData.concepts.length === 0) {
-            contentData.concepts = [
-                { id: Date.now()+3, title: "Оружие будущего", desc: "Концепт плазменной пушки", author: "Designer", date: new Date().toLocaleDateString() }
-            ];
-        }
+        // НЕТ ТЕСТОВЫХ ДАННЫХ — всё чисто
         saveData();
     }
 
     function saveData() {
-        localStorage.setItem('chicken_gun_dark_data', JSON.stringify(contentData));
+        localStorage.setItem('chicken_gun_final_data', JSON.stringify(contentData));
     }
 
-    // ========== ОТРИСОВКА КОНТЕНТА ==========
+    // ========== ОТРИСОВКА ГЛАВНОЙ ЛЕНТЫ ==========
     function renderContent() {
         const widget = document.getElementById('contentWidget');
         const items = contentData[currentCategory];
         
         if (!items || items.length === 0) {
-            widget.innerHTML = `<div class="empty-state">📭 Пока ничего нет. Нажмите + чтобы добавить!</div>`;
+            widget.innerHTML = `<div class="empty-state">📭 Пусто. Нажмите + чтобы добавить пост!</div>`;
             return;
         }
         
         let html = '';
         for (let item of items) {
             html += `
-                <div class="content-card" data-id="${item.id}">
-                    <div class="card-title">📌 ${escapeHtml(item.title)}</div>
-                    <div class="card-desc">${escapeHtml(item.desc)}</div>
-                    <div class="card-meta">
+                <div class="post-card" data-id="${item.id}">
+                    <div class="post-title">📌 ${escapeHtml(item.title)}</div>
+                    <div class="post-desc">${escapeHtml(item.desc)}</div>
+                    ${item.image ? `<img src="${item.image}" class="post-image" data-fullimage="${item.image}" onclick="event.stopPropagation(); openFullImage('${item.image}')">` : ''}
+                    <div class="post-meta">
                         <span>✍️ ${escapeHtml(item.author)} | 📅 ${item.date}</span>
-                        <button class="delete-item" data-id="${item.id}">🗑 Удалить</button>
+                        <div>
+                            <span class="comments-link" onclick="event.stopPropagation(); openPostModal(${item.id})">💬 ${item.comments?.length || 0} комм.</span>
+                            <button class="delete-post" onclick="event.stopPropagation(); deletePost(${item.id})">🗑 Удалить</button>
+                        </div>
                     </div>
                 </div>
             `;
         }
         widget.innerHTML = html;
-        
-        // Навешиваем удаление
-        document.querySelectorAll('.delete-item').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const id = parseInt(btn.getAttribute('data-id'));
-                if (confirm('Удалить этот пост?')) {
-                    contentData[currentCategory] = contentData[currentCategory].filter(i => i.id !== id);
-                    saveData();
-                    renderContent();
-                }
-            });
-        });
     }
 
     function escapeHtml(str) {
@@ -426,92 +402,195 @@
         });
     }
 
-    // ========== ДОБАВЛЕНИЕ ==========
+    // ========== УДАЛЕНИЕ ПОСТА ==========
+    window.deletePost = function(id) {
+        if (confirm('Удалить пост навсегда?')) {
+            contentData[currentCategory] = contentData[currentCategory].filter(i => i.id !== id);
+            saveData();
+            renderContent();
+        }
+    };
+
+    // ========== ОТКРЫТИЕ ФОТО НА ВЕСЬ ЭКРАН ==========
+    window.openFullImage = function(src) {
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal-box" style="max-width: 90%; text-align: center; background: #1a1a1a;">
+                <img src="${src}" style="max-width: 100%; max-height: 70vh; border-radius: 16px;">
+                <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">Закрыть</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    };
+
+    // ========== ОТКРЫТИЕ ПОСТА С КОММЕНТАРИЯМИ ==========
+    window.openPostModal = function(postId) {
+        const post = contentData[currentCategory].find(p => p.id === postId);
+        if (!post) return;
+        
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        
+        let commentsHtml = '';
+        if (post.comments && post.comments.length > 0) {
+            for (let c of post.comments) {
+                commentsHtml += `
+                    <div class="comment">
+                        <div class="comment-author">${escapeHtml(c.author)}</div>
+                        <div class="comment-text">${escapeHtml(c.text)}</div>
+                        <div style="font-size: 10px; color: #666; margin-top: 5px;">${c.date}</div>
+                    </div>
+                `;
+            }
+        } else {
+            commentsHtml = '<div style="color:#777; text-align:center; padding:20px;">Нет комментариев. Будьте первым!</div>';
+        }
+        
+        modal.innerHTML = `
+            <div class="modal-box">
+                <h3>${escapeHtml(post.title)}</h3>
+                <div style="color:#aaa; margin-bottom:15px;">${escapeHtml(post.desc)}</div>
+                ${post.image ? `<img src="${post.image}" style="max-width:100%; border-radius:16px; margin:10px 0; cursor:pointer;" onclick="openFullImage('${post.image}')">` : ''}
+                <div style="font-size:12px; color:#777; margin-bottom:20px;">✍️ ${escapeHtml(post.author)} | 📅 ${post.date}</div>
+                
+                <div class="comments-section">
+                    <h4 style="margin-bottom:15px;">💬 Комментарии (${post.comments?.length || 0})</h4>
+                    <div id="commentsList">${commentsHtml}</div>
+                    <div class="add-comment">
+                        <input type="text" id="commentName" placeholder="Ваше имя" value="Гость">
+                        <input type="text" id="commentText" placeholder="Напишите комментарий...">
+                        <button onclick="addComment(${postId}, '${currentCategory}')">Отправить</button>
+                    </div>
+                </div>
+                <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">Закрыть</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    };
+
+    // ========== ДОБАВЛЕНИЕ КОММЕНТАРИЯ ==========
+    window.addComment = function(postId, category) {
+        const modal = document.querySelector('.modal-overlay');
+        const nameInput = modal.querySelector('#commentName');
+        const textInput = modal.querySelector('#commentText');
+        const author = nameInput.value.trim() || 'Гость';
+        const text = textInput.value.trim();
+        
+        if (!text) {
+            alert('Напишите комментарий');
+            return;
+        }
+        
+        const post = contentData[category].find(p => p.id === postId);
+        if (post) {
+            if (!post.comments) post.comments = [];
+            post.comments.push({
+                author: author,
+                text: text,
+                date: new Date().toLocaleString()
+            });
+            saveData();
+            // Обновляем модальное окно
+            openPostModal(postId);
+        }
+    };
+
+    // ========== ДОБАВЛЕНИЕ НОВОГО ПОСТА ==========
     function showAddModal() {
         const modal = document.createElement('div');
         modal.className = 'modal-overlay';
         modal.innerHTML = `
             <div class="modal-box">
-                <h3>➕ Добавить пост</h3>
-                <input type="text" id="addTitle" placeholder="Название">
-                <textarea id="addDesc" placeholder="Описание"></textarea>
-                <select id="addCategory">
+                <h3>➕ Новый пост</h3>
+                <input type="text" id="postTitle" placeholder="Название">
+                <textarea id="postDesc" placeholder="Описание" rows="3"></textarea>
+                <select id="postCategory">
                     <option value="arts">🎨 Арты</option>
                     <option value="buildings">🏗️ Постройки</option>
                     <option value="concepts">💡 Концепты</option>
                 </select>
-                <div class="modal-actions">
-                    <button class="btn-submit" id="submitAdd">Опубликовать</button>
-                    <button class="btn-cancel" id="cancelAdd">Отмена</button>
+                <input type="file" id="postImage" accept="image/*">
+                <div style="margin: 15px 0;">
+                    <button id="submitPostBtn" style="background:#4a4a4a; color:white; padding:10px 20px; border:none; border-radius:12px; cursor:pointer;">Опубликовать</button>
+                    <button id="cancelPostBtn" style="background:#3a3a3a; color:#ccc; padding:10px 20px; border:none; border-radius:12px; cursor:pointer; margin-left:10px;">Отмена</button>
                 </div>
             </div>
         `;
         document.body.appendChild(modal);
         
-        document.getElementById('submitAdd').onclick = () => {
-            const title = document.getElementById('addTitle').value.trim();
-            const desc = document.getElementById('addDesc').value.trim();
-            const cat = document.getElementById('addCategory').value;
+        let imageBase64 = null;
+        const fileInput = modal.querySelector('#postImage');
+        fileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Файл > 5MB');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (ev) => { imageBase64 = ev.target.result; };
+                reader.readAsDataURL(file);
+            }
+        };
+        
+        modal.querySelector('#submitPostBtn').onclick = () => {
+            const title = modal.querySelector('#postTitle').value.trim();
+            const desc = modal.querySelector('#postDesc').value.trim();
+            const cat = modal.querySelector('#postCategory').value;
             if (!title || !desc) {
                 alert('Заполните название и описание');
                 return;
             }
-            const newItem = {
+            const newPost = {
                 id: Date.now(),
                 title: title,
                 desc: desc,
+                image: imageBase64,
                 author: 'Пользователь',
-                date: new Date().toLocaleDateString()
+                date: new Date().toLocaleDateString(),
+                comments: []
             };
-            contentData[cat].unshift(newItem);
+            contentData[cat].unshift(newPost);
             saveData();
             if (currentCategory === cat) renderContent();
             modal.remove();
-            alert('✅ Добавлено!');
+            alert('✅ Пост добавлен!');
         };
         
-        document.getElementById('cancelAdd').onclick = () => modal.remove();
+        modal.querySelector('#cancelPostBtn').onclick = () => modal.remove();
         modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     }
 
-    // ========== НАСТРОЙКИ ==========
     function showSettings() {
         let total = contentData.arts.length + contentData.buildings.length + contentData.concepts.length;
-        alert(`⚙️ Статистика\n\n📊 Всего постов: ${total}\n🎨 Арты: ${contentData.arts.length}\n🏗️ Постройки: ${contentData.buildings.length}\n💡 Концепты: ${contentData.concepts.length}\n\n🗑️ Удалять можно любые посты\n💾 Все данные хранятся локально`);
+        alert(`⚙️ Статистика\n\n📊 Всего постов: ${total}\n🎨 Арты: ${contentData.arts.length}\n🏗️ Постройки: ${contentData.buildings.length}\n💡 Концепты: ${contentData.concepts.length}\n\n💾 Всё сохраняется на вашем устройстве`);
     }
 
-    // ========== ПЕРЕКЛЮЧЕНИЕ КАТЕГОРИЙ ==========
     function setActiveCategory(cat) {
         currentCategory = cat;
         document.querySelectorAll('.glass-btn[data-cat]').forEach(btn => {
-            if (btn.getAttribute('data-cat') === cat) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
+            if (btn.getAttribute('data-cat') === cat) btn.classList.add('active');
+            else btn.classList.remove('active');
         });
         renderContent();
     }
 
-    // ========== ИНИЦИАЛИЗАЦИЯ ==========
     function init() {
         loadData();
         
-        // Назначаем обработчики кнопкам категорий
         document.querySelectorAll('.glass-btn[data-cat]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const cat = btn.getAttribute('data-cat');
-                setActiveCategory(cat);
-            });
+            btn.addEventListener('click', () => setActiveCategory(btn.getAttribute('data-cat')));
         });
         
         document.getElementById('addBtn').onclick = showAddModal;
         document.getElementById('settingsBtn').onclick = showSettings;
         
-        // Активируем первую категорию
         setActiveCategory('arts');
     }
-    
+     
     init();
 </script>
 
