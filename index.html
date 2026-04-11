@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chicken Gun Community</title>
+    <title>CHICKEN GUN - Тёмная галерея</title>
     <style>
         * {
             margin: 0;
@@ -365,7 +365,7 @@
 
 <div class="glass-navbar">
     <div class="navbar-container">
-        <div class="logo">CG COMMUNITY</div>
+        <div class="logo">🔫 CHICKEN GUN</div>
         <div class="nav-buttons" id="categoryButtons">
             <button class="glass-btn" data-cat="arts">🎨 Арты</button>
             <button class="glass-btn" data-cat="buildings">🏗️ Постройки</button>
@@ -781,16 +781,25 @@
         }
     };
     
-    // ПРЯМОЙ ОБРАБОТЧИК БЕЗ cloneNode
     let submitBtn = modal.querySelector('#submitPost');
+    let cancelBtn = modal.querySelector('#cancelPost');
+    
     submitBtn.onclick = function(e) {
         e.preventDefault();
+        e.stopPropagation();
+        
         let title = modal.querySelector('#postTitle').value.trim();
         let desc = modal.querySelector('#postDesc').value.trim();
         let cat = modal.querySelector('#postCat').value;
         
-        if (!title) { alert('Введите название'); return; }
-        if (!desc) { alert('Введите описание'); return; }
+        if (!title) { 
+            alert('Введите название'); 
+            return; 
+        }
+        if (!desc) { 
+            alert('Введите описание'); 
+            return; 
+        }
         
         let newPost = {
             id: Date.now(),
@@ -808,13 +817,12 @@
         if (currentCategory === cat) {
             renderContent();
         }
-        
         modal.remove();
         alert('✅ Пост опубликован!');
     };
     
-    let cancelBtn = modal.querySelector('#cancelPost');
-    cancelBtn.onclick = function() {
+    cancelBtn.onclick = function(e) {
+        e.preventDefault();
         modal.remove();
     };
 }
