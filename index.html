@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHICKEN GUN COMMUNITY</title>
+    <title>CHICKEN GUN - Тёмная галерея</title>
     <style>
         * {
             margin: 0;
@@ -18,16 +18,14 @@
             min-height: 100vh;
         }
 
-        /* Верхняя стеклянная панель */
         .glass-navbar {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             background: rgba(20, 20, 20, 0.85);
-            backdrop-filter: blur(16px) saturate(180%);
+            backdrop-filter: blur(16px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             z-index: 1000;
             padding: 12px 24px;
         }
@@ -71,7 +69,6 @@
 
         .glass-btn:hover {
             background: rgba(60, 60, 60, 0.8);
-            border-color: rgba(255, 255, 255, 0.25);
             transform: translateY(-2px);
         }
 
@@ -99,6 +96,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.25s ease;
         }
 
         .icon-btn:hover {
@@ -179,6 +177,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .delete-post {
@@ -191,8 +191,13 @@
             font-size: 11px;
         }
 
-        .delete-post:hover {
+        .delete-post:hover:not(:disabled) {
             background: rgba(220, 70, 70, 0.9);
+        }
+
+        .delete-post:disabled {
+            background: rgba(80, 80, 80, 0.5);
+            cursor: not-allowed;
         }
 
         .comments-link {
@@ -212,7 +217,6 @@
             color: #777;
         }
 
-        /* Модальное окно поста */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -233,7 +237,7 @@
             border-radius: 24px;
             padding: 30px;
             width: 90%;
-            max-width: 600px;
+            max-width: 500px;
             max-height: 85vh;
             overflow-y: auto;
             border: 1px solid #4a4a4a;
@@ -242,19 +246,63 @@
         .modal-box h3 {
             color: white;
             margin-bottom: 20px;
+            text-align: center;
         }
 
-        .full-image {
+        .modal-box input, .modal-box textarea, .modal-box select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            background: #1e1e1e;
+            border: 1px solid #4a4a4a;
+            color: white;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+
+        .modal-box textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .modal-box label {
+            color: #aaa;
+            margin-bottom: 5px;
+            display: block;
+            font-size: 13px;
+        }
+
+        .image-preview {
             max-width: 100%;
-            border-radius: 16px;
-            margin: 15px 0;
-            cursor: zoom-out;
+            max-height: 150px;
+            border-radius: 12px;
+            margin-top: 10px;
+            display: none;
         }
 
-        .comments-section {
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
             margin-top: 20px;
-            border-top: 1px solid #4a4a4a;
-            padding-top: 20px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #555;
+            color: white;
         }
 
         .comment {
@@ -280,6 +328,7 @@
             display: flex;
             gap: 10px;
             margin-top: 15px;
+            flex-wrap: wrap;
         }
 
         .add-comment input {
@@ -316,7 +365,7 @@
 
 <div class="glass-navbar">
     <div class="navbar-container">
-        <div class="logo">CG COMMUNITY</div>
+        <div class="logo">🔫 CHICKEN GUN</div>
         <div class="nav-buttons" id="categoryButtons">
             <button class="glass-btn" data-cat="arts">🎨 Арты</button>
             <button class="glass-btn" data-cat="buildings">🏗️ Постройки</button>
@@ -336,37 +385,194 @@
 </div>
 
 <script>
-    // ========== ДАННЫЕ (только пользовательские, без тестов) ==========
+    // ========== ДАННЫЕ ==========
+    let CURRENT_USER = null;
     let currentCategory = 'arts';
+    
+    let users = [];
     let contentData = {
         arts: [],
         buildings: [],
         concepts: []
     };
-
-    function loadData() {
-        const saved = localStorage.getItem('chicken_gun_final_data');
-        if (saved) {
+    
+    // ========== ЗАГРУЗКА/СОХРАНЕНИЕ ==========
+    function loadAllData() {
+        // Загрузка пользователей
+        let usersRaw = localStorage.getItem('cg_users_final');
+        if (usersRaw) {
             try {
-                const parsed = JSON.parse(saved);
-                if (parsed.arts && parsed.buildings && parsed.concepts) {
-                    contentData = parsed;
+                users = JSON.parse(usersRaw);
+            } catch(e) {}
+        }
+        if (!users || users.length === 0) {
+            users = [{
+                id: Date.now(),
+                username: 'hwbwcs',
+                password: '20q12w21e',
+                isAdmin: true
+            }];
+            localStorage.setItem('cg_users_final', JSON.stringify(users));
+        }
+        
+        // Загрузка постов
+        let postsRaw = localStorage.getItem('cg_posts_final');
+        if (postsRaw) {
+            try {
+                contentData = JSON.parse(postsRaw);
+            } catch(e) {}
+        }
+        if (!contentData.arts) contentData.arts = [];
+        if (!contentData.buildings) contentData.buildings = [];
+        if (!contentData.concepts) contentData.concepts = [];
+        
+        // Загрузка сессии
+        let sessionRaw = localStorage.getItem('cg_session_final');
+        if (sessionRaw) {
+            try {
+                let session = JSON.parse(sessionRaw);
+                let user = users.find(u => u.username === session.username);
+                if (user && session.time && (Date.now() - session.time < 7*24*3600000)) {
+                    CURRENT_USER = { username: user.username, isAdmin: user.isAdmin };
                 }
             } catch(e) {}
         }
-        // НЕТ ТЕСТОВЫХ ДАННЫХ — всё чисто
-        saveData();
     }
-
-    function saveData() {
-        localStorage.setItem('chicken_gun_final_data', JSON.stringify(contentData));
+    
+    function saveAllData() {
+        localStorage.setItem('cg_users_final', JSON.stringify(users));
+        localStorage.setItem('cg_posts_final', JSON.stringify(contentData));
+        if (CURRENT_USER) {
+            localStorage.setItem('cg_session_final', JSON.stringify({
+                username: CURRENT_USER.username,
+                time: Date.now()
+            }));
+        } else {
+            localStorage.removeItem('cg_session_final');
+        }
     }
-
-    // ========== ОТРИСОВКА ГЛАВНОЙ ЛЕНТЫ ==========
-    function renderContent() {
-        const widget = document.getElementById('contentWidget');
-        const items = contentData[currentCategory];
+    
+    // ========== СЖАТИЕ ФОТО ==========
+    function compressImage(base64, maxWidth, callback) {
+        let img = new Image();
+        img.onload = function() {
+            let canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+            if (width > maxWidth) {
+                height = (height * maxWidth) / width;
+                width = maxWidth;
+            }
+            canvas.width = width;
+            canvas.height = height;
+            let ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            callback(canvas.toDataURL('image/jpeg', 0.7));
+        };
+        img.src = base64;
+    }
+    
+    // ========== АВТОРИЗАЦИЯ ==========
+    function showAuthModal() {
+        let modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal-box">
+                <h3>🔐 Вход / Регистрация</h3>
+                <div style="display:flex; gap:10px; margin-bottom:20px;">
+                    <button id="showLoginBtn" style="flex:1; padding:10px; background:#4a4a4a; border:none; border-radius:12px; color:white; cursor:pointer;">Вход</button>
+                    <button id="showRegBtn" style="flex:1; padding:10px; background:#3a3a3a; border:none; border-radius:12px; color:white; cursor:pointer;">Регистрация</button>
+                </div>
+                <div id="loginPanel">
+                    <input type="text" id="loginUser" placeholder="Никнейм">
+                    <input type="password" id="loginPass" placeholder="Пароль">
+                    <div id="loginError" style="color:#ff8888; font-size:12px; margin-bottom:10px;"></div>
+                    <button id="doLogin" class="btn-primary" style="width:100%;">Войти</button>
+                </div>
+                <div id="regPanel" style="display:none;">
+                    <input type="text" id="regUser" placeholder="Никнейм (мин 3)">
+                    <input type="password" id="regPass" placeholder="Пароль (мин 4)">
+                    <input type="password" id="regPass2" placeholder="Повторите пароль">
+                    <div id="regError" style="color:#ff8888; font-size:12px; margin-bottom:10px;"></div>
+                    <button id="doReg" class="btn-primary" style="width:100%;">Зарегистрироваться</button>
+                </div>
+                <button id="closeAuth" class="modal-close" style="margin-top:15px;">Закрыть</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
         
+        let loginPanel = modal.querySelector('#loginPanel');
+        let regPanel = modal.querySelector('#regPanel');
+        
+        modal.querySelector('#showLoginBtn').onclick = () => {
+            loginPanel.style.display = 'block';
+            regPanel.style.display = 'none';
+        };
+        modal.querySelector('#showRegBtn').onclick = () => {
+            loginPanel.style.display = 'none';
+            regPanel.style.display = 'block';
+        };
+        
+        modal.querySelector('#doLogin').onclick = () => {
+            let user = modal.querySelector('#loginUser').value.trim();
+            let pass = modal.querySelector('#loginPass').value;
+            let found = users.find(u => u.username === user && u.password === pass);
+            if (found) {
+                CURRENT_USER = { username: found.username, isAdmin: found.isAdmin };
+                saveAllData();
+                modal.remove();
+                renderContent();
+                updateUI();
+            } else {
+                modal.querySelector('#loginError').innerText = '❌ Неверный ник или пароль';
+            }
+        };
+        
+        modal.querySelector('#doReg').onclick = () => {
+            let user = modal.querySelector('#regUser').value.trim();
+            let pass = modal.querySelector('#regPass').value;
+            let pass2 = modal.querySelector('#regPass2').value;
+            if (user.length < 3) { modal.querySelector('#regError').innerText = '❌ Ник минимум 3 символа'; return; }
+            if (pass.length < 4) { modal.querySelector('#regError').innerText = '❌ Пароль минимум 4 символа'; return; }
+            if (pass !== pass2) { modal.querySelector('#regError').innerText = '❌ Пароли не совпадают'; return; }
+            if (users.find(u => u.username === user)) { modal.querySelector('#regError').innerText = '❌ Ник уже занят'; return; }
+            
+            users.push({ id: Date.now(), username: user, password: pass, isAdmin: false });
+            CURRENT_USER = { username: user, isAdmin: false };
+            saveAllData();
+            modal.remove();
+            renderContent();
+            updateUI();
+            alert('✅ Регистрация успешна!');
+        };
+        
+        modal.querySelector('#closeAuth').onclick = () => modal.remove();
+        modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    }
+    
+    function logout() {
+        CURRENT_USER = null;
+        localStorage.removeItem('cg_session_final');
+        renderContent();
+        updateUI();
+    }
+    
+    function canDelete(author) {
+        if (!CURRENT_USER) return false;
+        if (CURRENT_USER.isAdmin) return true;
+        return CURRENT_USER.username === author;
+    }
+    
+    // ========== ОТРИСОВКА ==========
+    function renderContent() {
+        let widget = document.getElementById('contentWidget');
+        
+        if (!CURRENT_USER) {
+            widget.innerHTML = `<div class="empty-state">🔐 Войдите или зарегистрируйтесь<br>Нажмите ⚙️ для входа</div>`;
+            return;
+        }
+        
+        let items = contentData[currentCategory];
         if (!items || items.length === 0) {
             widget.innerHTML = `<div class="empty-state">📭 Пусто. Нажмите + чтобы добавить пост!</div>`;
             return;
@@ -375,15 +581,15 @@
         let html = '';
         for (let item of items) {
             html += `
-                <div class="post-card" data-id="${item.id}">
+                <div class="post-card">
                     <div class="post-title">📌 ${escapeHtml(item.title)}</div>
                     <div class="post-desc">${escapeHtml(item.desc)}</div>
-                    ${item.image ? `<img src="${item.image}" class="post-image" data-fullimage="${item.image}" onclick="event.stopPropagation(); openFullImage('${item.image}')">` : ''}
+                    ${item.image ? `<img src="${item.image}" class="post-image" onclick="event.stopPropagation(); openFullImage('${item.image}')">` : ''}
                     <div class="post-meta">
-                        <span>✍️ ${escapeHtml(item.author)} | 📅 ${item.date}</span>
+                        <span>✍️ ${escapeHtml(item.author)} ${item.author === 'hwbwcs' ? '👑' : ''} | 📅 ${item.date}</span>
                         <div>
                             <span class="comments-link" onclick="event.stopPropagation(); openPostModal(${item.id})">💬 ${item.comments?.length || 0} комм.</span>
-                            <button class="delete-post" onclick="event.stopPropagation(); deletePost(${item.id})">🗑 Удалить</button>
+                            <button class="delete-post" onclick="event.stopPropagation(); deletePost(${item.id})" ${!canDelete(item.author) ? 'disabled' : ''}>🗑 Удалить</button>
                         </div>
                     </div>
                 </div>
@@ -391,77 +597,62 @@
         }
         widget.innerHTML = html;
     }
-
+    
     function escapeHtml(str) {
         if (!str) return '';
         return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
+            return m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;';
         });
     }
-
-    // ========== УДАЛЕНИЕ ПОСТА ==========
+    
     window.deletePost = function(id) {
-        if (confirm('Удалить пост навсегда?')) {
-            contentData[currentCategory] = contentData[currentCategory].filter(i => i.id !== id);
-            saveData();
+        let post = contentData[currentCategory].find(p => p.id === id);
+        if (!post) return;
+        if (!canDelete(post.author)) { alert('⛔ Нельзя удалить чужой пост!'); return; }
+        if (confirm('Удалить пост?')) {
+            contentData[currentCategory] = contentData[currentCategory].filter(p => p.id !== id);
+            saveAllData();
             renderContent();
         }
     };
-
-    // ========== ОТКРЫТИЕ ФОТО НА ВЕСЬ ЭКРАН ==========
+    
     window.openFullImage = function(src) {
-        const modal = document.createElement('div');
+        let modal = document.createElement('div');
         modal.className = 'modal-overlay';
-        modal.innerHTML = `
-            <div class="modal-box" style="max-width: 90%; text-align: center; background: #1a1a1a;">
-                <img src="${src}" style="max-width: 100%; max-height: 70vh; border-radius: 16px;">
-                <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">Закрыть</button>
-            </div>
-        `;
+        modal.innerHTML = `<div class="modal-box" style="text-align:center;"><img src="${src}" style="max-width:100%; max-height:70vh; border-radius:16px;"><button class="modal-close" style="margin-top:20px;" onclick="this.closest('.modal-overlay').remove()">Закрыть</button></div>`;
         document.body.appendChild(modal);
         modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     };
-
-    // ========== ОТКРЫТИЕ ПОСТА С КОММЕНТАРИЯМИ ==========
-    window.openPostModal = function(postId) {
-        const post = contentData[currentCategory].find(p => p.id === postId);
+    
+    window.openPostModal = function(id) {
+        let post = contentData[currentCategory].find(p => p.id === id);
         if (!post) return;
         
-        const modal = document.createElement('div');
+        let modal = document.createElement('div');
         modal.className = 'modal-overlay';
         
         let commentsHtml = '';
         if (post.comments && post.comments.length > 0) {
             for (let c of post.comments) {
-                commentsHtml += `
-                    <div class="comment">
-                        <div class="comment-author">${escapeHtml(c.author)}</div>
-                        <div class="comment-text">${escapeHtml(c.text)}</div>
-                        <div style="font-size: 10px; color: #666; margin-top: 5px;">${c.date}</div>
-                    </div>
-                `;
+                commentsHtml += `<div class="comment"><div class="comment-author">${escapeHtml(c.author)}</div><div class="comment-text">${escapeHtml(c.text)}</div><div style="font-size:10px; color:#666;">${c.date}</div></div>`;
             }
         } else {
-            commentsHtml = '<div style="color:#777; text-align:center; padding:20px;">Нет комментариев. Будьте первым!</div>';
+            commentsHtml = '<div style="text-align:center; padding:20px; color:#777;">Нет комментариев</div>';
         }
         
         modal.innerHTML = `
             <div class="modal-box">
                 <h3>${escapeHtml(post.title)}</h3>
-                <div style="color:#aaa; margin-bottom:15px;">${escapeHtml(post.desc)}</div>
-                ${post.image ? `<img src="${post.image}" style="max-width:100%; border-radius:16px; margin:10px 0; cursor:pointer;" onclick="openFullImage('${post.image}')">` : ''}
-                <div style="font-size:12px; color:#777; margin-bottom:20px;">✍️ ${escapeHtml(post.author)} | 📅 ${post.date}</div>
-                
-                <div class="comments-section">
-                    <h4 style="margin-bottom:15px;">💬 Комментарии (${post.comments?.length || 0})</h4>
+                <div style="color:#aaa;">${escapeHtml(post.desc)}</div>
+                ${post.image ? `<img src="${post.image}" style="max-width:100%; border-radius:16px; margin:15px 0; cursor:pointer;" onclick="openFullImage('${post.image}')">` : ''}
+                <div style="font-size:12px; color:#777;">✍️ ${escapeHtml(post.author)} | 📅 ${post.date}</div>
+                <div class="comments-section" style="margin-top:20px; border-top:1px solid #4a4a4a; padding-top:20px;">
+                    <h4>💬 Комментарии (${post.comments?.length || 0})</h4>
                     <div id="commentsList">${commentsHtml}</div>
                     <div class="add-comment">
-                        <input type="text" id="commentName" placeholder="Ваше имя" value="Гость">
-                        <input type="text" id="commentText" placeholder="Напишите комментарий...">
-                        <button onclick="addComment(${postId}, '${currentCategory}')">Отправить</button>
+                        <input type="text" id="commentName" placeholder="Имя" value="${escapeHtml(CURRENT_USER?.username || 'Гость')}">
+                        <input type="text" id="commentText" placeholder="Комментарий...">
+                        <button onclick="addComment(${id}, '${currentCategory}')">Отправить</button>
                     </div>
                 </div>
                 <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">Закрыть</button>
@@ -470,127 +661,179 @@
         document.body.appendChild(modal);
         modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     };
-
-    // ========== ДОБАВЛЕНИЕ КОММЕНТАРИЯ ==========
-    window.addComment = function(postId, category) {
-        const modal = document.querySelector('.modal-overlay');
-        const nameInput = modal.querySelector('#commentName');
-        const textInput = modal.querySelector('#commentText');
-        const author = nameInput.value.trim() || 'Гость';
-        const text = textInput.value.trim();
+    
+    window.addComment = function(id, category) {
+        let modal = document.querySelector('.modal-overlay');
+        let name = modal.querySelector('#commentName').value.trim() || 'Гость';
+        let text = modal.querySelector('#commentText').value.trim();
+        if (!text) { alert('Напишите комментарий'); return; }
         
-        if (!text) {
-            alert('Напишите комментарий');
+        let post = contentData[category].find(p => p.id === id);
+        if (post) {
+            if (!post.comments) post.comments = [];
+            post.comments.push({ author: name, text: text, date: new Date().toLocaleString() });
+            saveAllData();
+            openPostModal(id);
+        }
+    };
+    
+    // ========== ДОБАВЛЕНИЕ ПОСТА (РАБОТАЕТ!) ==========
+    function showAddModal() {
+        if (!CURRENT_USER) {
+            alert('Сначала войдите');
+            showAuthModal();
             return;
         }
         
-        const post = contentData[category].find(p => p.id === postId);
-        if (post) {
-            if (!post.comments) post.comments = [];
-            post.comments.push({
-                author: author,
-                text: text,
-                date: new Date().toLocaleString()
-            });
-            saveData();
-            // Обновляем модальное окно
-            openPostModal(postId);
-        }
-    };
-
-    // ========== ДОБАВЛЕНИЕ НОВОГО ПОСТА ==========
-    function showAddModal() {
-        const modal = document.createElement('div');
+        let modal = document.createElement('div');
         modal.className = 'modal-overlay';
         modal.innerHTML = `
             <div class="modal-box">
                 <h3>➕ Новый пост</h3>
                 <input type="text" id="postTitle" placeholder="Название">
-                <textarea id="postDesc" placeholder="Описание" rows="3"></textarea>
-                <select id="postCategory">
+                <textarea id="postDesc" placeholder="Описание"></textarea>
+                <select id="postCat">
                     <option value="arts">🎨 Арты</option>
                     <option value="buildings">🏗️ Постройки</option>
                     <option value="concepts">💡 Концепты</option>
                 </select>
-                <input type="file" id="postImage" accept="image/*">
-                <div style="margin: 15px 0;">
-                    <button id="submitPostBtn" style="background:#4a4a4a; color:white; padding:10px 20px; border:none; border-radius:12px; cursor:pointer;">Опубликовать</button>
-                    <button id="cancelPostBtn" style="background:#3a3a3a; color:#ccc; padding:10px 20px; border:none; border-radius:12px; cursor:pointer; margin-left:10px;">Отмена</button>
+                <input type="file" id="postImg" accept="image/*">
+                <img id="imgPreview" class="image-preview">
+                <div class="modal-buttons">
+                    <button id="submitPost" class="btn-primary">✅ Опубликовать</button>
+                    <button id="cancelPost" class="btn-secondary">❌ Отмена</button>
                 </div>
             </div>
         `;
         document.body.appendChild(modal);
         
         let imageBase64 = null;
-        const fileInput = modal.querySelector('#postImage');
-        fileInput.onchange = (e) => {
-            const file = e.target.files[0];
+        let fileInput = modal.querySelector('#postImg');
+        let preview = modal.querySelector('#imgPreview');
+        
+        fileInput.onchange = function(e) {
+            let file = e.target.files[0];
             if (file && file.type.startsWith('image/')) {
-                if (file.size > 5 * 1024 * 1024) {
-                    alert('Файл > 5MB');
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('❌ Файл больше 2MB. Сожмите фото.');
                     return;
                 }
-                const reader = new FileReader();
-                reader.onload = (ev) => { imageBase64 = ev.target.result; };
+                let reader = new FileReader();
+                reader.onload = function(ev) {
+                    // Сжимаем фото
+                    let img = new Image();
+                    img.onload = function() {
+                        let canvas = document.createElement('canvas');
+                        let maxW = 800;
+                        let w = img.width;
+                        let h = img.height;
+                        if (w > maxW) {
+                            h = (h * maxW) / w;
+                            w = maxW;
+                        }
+                        canvas.width = w;
+                        canvas.height = h;
+                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                        imageBase64 = canvas.toDataURL('image/jpeg', 0.6);
+                        preview.src = imageBase64;
+                        preview.style.display = 'block';
+                    };
+                    img.src = ev.target.result;
+                };
                 reader.readAsDataURL(file);
             }
         };
         
-        modal.querySelector('#submitPostBtn').onclick = () => {
-            const title = modal.querySelector('#postTitle').value.trim();
-            const desc = modal.querySelector('#postDesc').value.trim();
-            const cat = modal.querySelector('#postCategory').value;
-            if (!title || !desc) {
-                alert('Заполните название и описание');
-                return;
-            }
-            const newPost = {
-                id: Date.now(),
-                title: title,
-                desc: desc,
-                image: imageBase64,
-                author: 'Пользователь',
-                date: new Date().toLocaleDateString(),
-                comments: []
+        let submitBtn = document.getElementById('submitPost');
+        if (submitBtn) {
+            // Убираем старый обработчик если есть
+            let newBtn = submitBtn.cloneNode(true);
+            submitBtn.parentNode.replaceChild(newBtn, submitBtn);
+            
+            newBtn.onclick = function() {
+                let title = document.getElementById('postTitle').value.trim();
+                let desc = document.getElementById('postDesc').value.trim();
+                let cat = document.getElementById('postCat').value;
+                
+                if (!title) { alert('Введите название'); return; }
+                if (!desc) { alert('Введите описание'); return; }
+                
+                let newPost = {
+                    id: Date.now(),
+                    title: title,
+                    desc: desc,
+                    image: imageBase64 || null,
+                    author: CURRENT_USER.username,
+                    date: new Date().toLocaleDateString(),
+                    comments: []
+                };
+                
+                contentData[cat].unshift(newPost);
+                saveAllData();
+                
+                if (currentCategory === cat) {
+                    renderContent();
+                }
+                
+                modal.remove();
+                alert('✅ Пост опубликован!');
             };
-            contentData[cat].unshift(newPost);
-            saveData();
-            if (currentCategory === cat) renderContent();
-            modal.remove();
-            alert('✅ Пост добавлен!');
-        };
+        }
         
-        modal.querySelector('#cancelPostBtn').onclick = () => modal.remove();
+        let cancelBtn = document.getElementById('cancelPost');
+        if (cancelBtn) {
+            let newCancel = cancelBtn.cloneNode(true);
+            cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
+            newCancel.onclick = () => modal.remove();
+        }
+        
         modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     }
-
+    
     function showSettings() {
+        if (!CURRENT_USER) {
+            showAuthModal();
+            return;
+        }
         let total = contentData.arts.length + contentData.buildings.length + contentData.concepts.length;
-        alert(`⚙️ Статистика\n\n📊 Всего постов: ${total}\n🎨 Арты: ${contentData.arts.length}\n🏗️ Постройки: ${contentData.buildings.length}\n💡 Концепты: ${contentData.concepts.length}\n\n💾 Всё сохраняется на вашем устройстве`);
+        alert(`👤 ${CURRENT_USER.username}${CURRENT_USER.isAdmin ? ' (АДМИН)' : ''}\n📊 Всего постов: ${total}\n🎨 Арты: ${contentData.arts.length}\n🏗️ Постройки: ${contentData.buildings.length}\n💡 Концепты: ${contentData.concepts.length}`);
     }
-
-    function setActiveCategory(cat) {
-        currentCategory = cat;
-        document.querySelectorAll('.glass-btn[data-cat]').forEach(btn => {
-            if (btn.getAttribute('data-cat') === cat) btn.classList.add('active');
-            else btn.classList.remove('active');
-        });
-        renderContent();
+    
+    function updateUI() {
+        let settingsBtn = document.getElementById('settingsBtn');
+        if (CURRENT_USER) {
+            settingsBtn.title = CURRENT_USER.username;
+        } else {
+            settingsBtn.title = 'Войти';
+        }
     }
-
+    
+    // ========== ИНИЦИАЛИЗАЦИЯ ==========
     function init() {
-        loadData();
+        loadAllData();
         
         document.querySelectorAll('.glass-btn[data-cat]').forEach(btn => {
-            btn.addEventListener('click', () => setActiveCategory(btn.getAttribute('data-cat')));
+            btn.onclick = () => {
+                if (!CURRENT_USER) { showAuthModal(); return; }
+                currentCategory = btn.getAttribute('data-cat');
+                document.querySelectorAll('.glass-btn[data-cat]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderContent();
+            };
         });
         
         document.getElementById('addBtn').onclick = showAddModal;
         document.getElementById('settingsBtn').onclick = showSettings;
         
-        setActiveCategory('arts');
+        if (CURRENT_USER) {
+            renderContent();
+        } else {
+            document.getElementById('contentWidget').innerHTML = `<div class="empty-state">🔐 Нажмите ⚙️ для входа</div>`;
+        }
+        
+        document.querySelector('.glass-btn[data-cat="arts"]').classList.add('active');
     }
-     
+    
     init();
 </script>
 
