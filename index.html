@@ -1,415 +1,287 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHICKEN GUN NEWS</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            background-color: #313131;
-            min-height: 100vh;
-            flex-direction: column;
-            display: flex;
-            padding: 20px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .title {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: white;
-            font-size: 128px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-weight: bold;
-            word-break: break-word;
-        }
-
-        .description {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: #9a9a9a;
-            font-size: 32px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-weight: lighter;
-            padding: 0 10px;
-        }
-
-        .container-1 {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap; /* Позволяет кнопкам переноситься на новую строку */
-            gap: 10px;
-            margin: 20px 0;
-        }
-
-        /* Общий стиль для всех кнопок категорий */
-        .category-btn {
-            padding: 10px 20px;
-            min-height: 47px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 32px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-weight: lighter;
-            background-color: #313131;
-            border: 1px solid #4a4a4a;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            white-space: nowrap; /* Предотвращает перенос текста внутри кнопки */
-        }
-
-        .category-btn:hover {
-            background-color: #4a4a4a;
-            transform: translateY(-2px);
-        }
-
-        .category-btn.active {
-            background-color: #6b6b6b;
-            border-color: #9a9a9a;
-            font-weight: bold;
-        }
-
-        /* Убираем фиксированную ширину, делаем её автоматической или через медиа-запросы */
-        .category-1, .category-2, .category-3, .category-4 {
-            width: auto;
-            min-width: 150px;
-        }
-
-        /* НОВОСТНОЙ ВИДЖЕТ СО СКРОЛЛОМ */
-        .news-widget {
-            height: 400px;
-            padding: 20px;
-            overflow-y: auto;
-            color: white;
-            border: 1px solid #3d3d3d;
-            border-radius: 10px;
-            background-color: #2a2a2a;
-            margin: 20px 0;
-        }
-
-        /* Стилизация скроллбара для виджета */
-        .news-widget::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .news-widget::-webkit-scrollbar-track {
-            background: #3d3d3d;
-            border-radius: 10px;
-        }
-
-        .news-widget::-webkit-scrollbar-thumb {
-            background: #6b6b6b;
-            border-radius: 10px;
-        }
-
-        .news-widget::-webkit-scrollbar-thumb:hover {
-            background: #9a9a9a;
-        }
-
-        /* Стили для новостных карточек */
-        .news-card {
-            background-color: #3d3d3d;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            transition: transform 0.2s;
-            word-break: break-word;
-        }
-
-        .news-card:hover {
-            transform: translateX(5px);
-            background-color: #4a4a4a;
-        }
-
-        .news-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: #ffd966;
-        }
-
-        .news-description {
-            font-size: 14px;
-            color: #cccccc;
-            line-height: 1.4;
-        }
-
-        .news-date {
-            font-size: 12px;
-            color: #9a9a9a;
-            margin-top: 8px;
-        }
-
-        .footer {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: #626262;
-            font-size: 32px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-weight: lighter;
-            background-color: #313131;
-            margin-top: 20px;
-            padding: 10px;
-        }
-
-        /* ========== АДАПТАЦИЯ ПОД РАЗНЫЕ ЭКРАНЫ ========== */
-
-        /* Планшеты и маленькие ноутбуки (1024px и меньше) */
-        @media (max-width: 1024px) {
-            .title {
-                font-size: 80px;
-            }
-            
-            .description {
-                font-size: 24px;
-            }
-            
-            .category-btn {
-                font-size: 24px;
-                padding: 8px 16px;
-            }
-            
-            .footer {
-                font-size: 24px;
-            }
-        }
-
-        /* Телефоны в горизонтальной ориентации (768px и меньше) */
-        @media (max-width: 768px) {
-            body {
-                padding: 15px;
-            }
-            
-            .title {
-                font-size: 56px;
-            }
-            
-            .description {
-                font-size: 18px;
-            }
-            
-            .category-btn {
-                font-size: 18px;
-                padding: 6px 12px;
-                min-width: 120px;
-            }
-            
-            .container-1 {
-                gap: 8px;
-            }
-            
-            .news-widget {
-                height: 350px;
-                padding: 15px;
-            }
-            
-            .news-title {
-                font-size: 18px;
-            }
-            
-            .news-description {
-                font-size: 13px;
-            }
-            
-            .footer {
-                font-size: 18px;
-            }
-        }
-
-        /* Телефоны в вертикальной ориентации (480px и меньше) */
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-            
-            .title {
-                font-size: 36px;
-            }
-            
-            .description {
-                font-size: 14px;
-            }
-            
-            .category-btn {
-                font-size: 14px;
-                padding: 5px 10px;
-                min-width: 100px;
-                white-space: normal; /* Разрешаем перенос текста на маленьких экранах */
-                text-align: center;
-            }
-            
-            .container-1 {
-                gap: 6px;
-            }
-            
-            .news-widget {
-                height: 300px;
-                padding: 12px;
-            }
-            
-            .news-card {
-                padding: 12px;
-                margin-bottom: 12px;
-            }
-            
-            .news-title {
-                font-size: 16px;
-            }
-            
-            .news-description {
-                font-size: 12px;
-            }
-            
-            .news-date {
-                font-size: 10px;
-            }
-            
-            .footer {
-                font-size: 14px;
-            }
-        }
-
-        /* Очень маленькие телефоны (360px и меньше) */
-        @media (max-width: 360px) {
-            .title {
-                font-size: 28px;
-            }
-            
-            .category-btn {
-                font-size: 12px;
-                padding: 4px 8px;
-                min-width: 85px;
-            }
-            
-            .news-widget {
-                height: 280px;
-                padding: 10px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>CHICKEN GUN NEWS</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#313131;color:#fff;font-family:Segoe UI,Tahoma,sans-serif;min-height:100vh;padding:20px;padding-bottom:120px}
+.header{text-align:center;margin-bottom:25px}
+.title{font-size:42px;font-weight:800}
+.subtitle{color:#aaa;margin-top:5px}
+.user-panel{background:#414141;padding:14px;border-radius:12px;margin:15px 0;text-align:center;border:1px solid #555}
+.category-bar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:20px 0}
+.cat-btn{background:#414141;border:1px solid #555;color:#fff;padding:10px 20px;border-radius:10px;cursor:pointer;transition:.2s}
+.cat-btn.active{background:#5a5a5a;border-color:#777}
+.cat-btn:hover{background:#505050}
+.news-container{background:#414141;border-radius:14px;height:480px;overflow:auto;padding:15px;border:1px solid #555}
+.news-card{background:#313131;border-radius:12px;padding:15px;margin-bottom:15px;border:1px solid #555}
+.news-title{font-size:18px;font-weight:700;color:#e0e0e0}
+.news-desc{font-size:14px;color:#ccc;margin-top:6px}
+.news-meta{font-size:12px;color:#888;margin-top:6px}
+.news-img{max-width:100%;max-height:180px;border-radius:10px;margin-top:10px}
+.delete-news{margin-top:10px;background:#ff4d4d;color:#fff;border:none;padding:6px 12px;border-radius:6px;cursor:pointer}
+.delete-news:disabled{background:#666}
+.empty-news{text-align:center;color:#aaa;padding:50px}
+.fab{position:fixed;right:20px;width:56px;height:56px;border-radius:50%;border:none;color:#fff;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.add{bottom:100px;background:#5a5a5a}
+.set{bottom:170px;background:#4a4a4a}
+.out{bottom:30px;background:#666}
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center}
+.modal-box{background:#414141;padding:25px;border-radius:14px;width:90%;max-width:420px;border:1px solid #555}
+.modal-box input,.modal-box textarea,.modal-box select{width:100%;margin-bottom:12px;padding:12px;background:#313131;border:1px solid #555;color:#fff;border-radius:8px}
+.modal-box textarea{min-height:80px}
+.modal-box button{padding:12px;border:none;border-radius:8px;margin-top:5px;width:100%}
+.btn-primary{background:#5a5a5a}
+.btn-secondary{background:#666}
+</style>
 </head>
 <body>
 
-<div class="title">Приветствую!</div>
-<div class="description">Рад видеть тебя в новой предложке @chickengunblog!</div>
-<div class="description">Исследуй сообщество и делись своими новостями</div>
-
-<div class="container-1">
-    <button class="category-btn category-1" data-category="concepts">Концепты</button>
-    <button class="category-btn category-2" data-category="builds">Постройки</button>
-    <button class="category-btn category-3" data-category="arts">Арты</button>
-    <button class="category-btn category-4" id="suggestBtn">Предложить новость</button>
+<div class="header">
+<div class="title">🐔 CHICKEN GUN NEWS</div>
+<div class="subtitle">WebApp</div>
 </div>
 
-<!-- НОВОСТНОЙ ВИДЖЕТ СО СКРОЛЛОМ -->
-<div class="news-widget" id="newsWidget">
-    <!-- Контент будет загружаться сюда динамически -->
+<div class="user-panel" id="userPanel">🔒 Не авторизован</div>
+
+<div class="category-bar">
+<button class="cat-btn" data-cat="concepts">📐 Концепты</button>
+<button class="cat-btn" data-cat="builds">🏗️ Постройки</button>
+<button class="cat-btn" data-cat="arts">🎨 Арты</button>
 </div>
 
-<div class="footer">Сайт создал hwbwcs, приятного использования</div>
+<div class="news-container" id="newsContainer"></div>
+
+<button class="fab add" id="addBtn">+</button>
+<button class="fab set" id="settingsBtn">⚙️</button>
+<button class="fab out" id="logoutBtn">🚪</button>
 
 <script>
-    const newsData = {
-        concepts: [
-            { title: "Концепт персонажа", description: "дилдо рубящий планеты", date: "2026-01-20" },
-            { title: "Концепт ук", description: "костюм скибиди туалета", date: "2026-01-25" },
-            { title: "Концепт транспорта", description: "пелемень с крыльями", date: "2026-02-01" },
-        ],
-        builds: [
-            { title: "Космодром", description: "Стартовая площадка для ракет с курицами", date: "2026-02-07" }
-        ],
-        arts: [
-            { title: "Арт: ававывф", description: "гречка2кг", date: "2026-01-12" },
-        ]
-    };
+const tg=window.Telegram?Telegram.WebApp:null;
+if(tg){tg.expand();tg.ready()}
 
-    // Функция отображения новостей в виджете
-    function displayNews(category) {
-        const widget = document.getElementById('newsWidget');
-        const news = newsData[category];
-        
-        if (!news || news.length === 0) {
-            widget.innerHTML = '<div class="news-card">📭 Новостей пока нет</div>';
-            return;
-        }
-        
-        let html = '';
-        news.forEach(item => {
-            html += `
-                <div class="news-card">
-                    <div class="news-title">📢 ${escapeHtml(item.title)}</div>
-                    <div class="news-description">${escapeHtml(item.description)}</div>
-                    <div class="news-date">📅 ${escapeHtml(item.date)}</div>
-                </div>
-            `;
-        });
-        
-        widget.innerHTML = html;
-        widget.scrollTop = 0;
-    }
+let USERS=[],NEWS={concepts:[],builds:[],arts:[]},CURRENT_USER=null,CURRENT_CAT="concepts";
 
-    // Простая защита от XSS
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
+function encode(data){return btoa(encodeURIComponent(JSON.stringify(data)))}
+function decode(data){try{return JSON.parse(decodeURIComponent(atob(data)))}catch{return null}}
+function hash(p){return btoa(p.split("").reverse().join("")+"cg")}
 
-    function setActiveButton(activeBtn) {
-        document.querySelectorAll('.category-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        activeBtn.classList.add('active');
-    }
-    
-    document.querySelectorAll('[data-category]').forEach(button => {
-        button.addEventListener('click', () => {
-            const category = button.getAttribute('data-category');
-            displayNews(category);
-            setActiveButton(button);
-        });
-    });
-    
-    document.getElementById('suggestBtn').addEventListener('click', () => {
-        const newsText = prompt('📝 Введите вашу новость:');
-        if (newsText && newsText.trim()) {
-            const activeCategory = document.querySelector('.category-btn.active')?.getAttribute('data-category') || 'concepts';
-            const newNews = {
-                title: "Предложенная новость",
-                description: newsText,
-                date: new Date().toISOString().split('T')[0]
-            };
-            if (!newsData[activeCategory]) {
-                newsData[activeCategory] = [];
-            }
-            newsData[activeCategory].unshift(newNews);
-            displayNews(activeCategory);
-            alert('✅ Спасибо! Новость добавлена!');
-        }
-    });
-    
-    // Отображаем концепты по умолчанию
-    displayNews('concepts');
-    document.querySelector('[data-category="concepts"]').classList.add('active');
+function saveUsers(){localStorage.setItem("cg_users",encode(USERS))}
+function saveNews(){localStorage.setItem("cg_news",encode(NEWS))}
+function saveSession(){
+if(CURRENT_USER)localStorage.setItem("cg_session",encode({u:CURRENT_USER.username,t:Date.now()}))
+else localStorage.removeItem("cg_session")
+}
+
+function loadData(){
+let rawU=localStorage.getItem("cg_users");
+let u=rawU?decode(rawU):null;
+if(Array.isArray(u))USERS=u;
+if(USERS.length===0){
+USERS=[{username:"admin",password:hash("admin123"),isAdmin:true}];
+saveUsers()
+}
+
+let rawN=localStorage.getItem("cg_news");
+let n=rawN?decode(rawN):null;
+if(n&&n.concepts&&n.builds&&n.arts)NEWS=n;
+
+if(NEWS.concepts.length+NEWS.builds.length+NEWS.arts.length===0){
+NEWS={
+concepts:[{id:Date.now(),title:"Курица-киборг",desc:"Лазерные системы",date:new Date().toLocaleDateString(),author:"admin"}],
+builds:[{id:Date.now()+1,title:"Форт",desc:"Защитная база",date:new Date().toLocaleDateString(),author:"admin"}],
+arts:[{id:Date.now()+2,title:"Арт",desc:"Битва",date:new Date().toLocaleDateString(),author:"admin"}]
+};
+saveNews()
+}
+}
+
+function loadSession(){
+let raw=localStorage.getItem("cg_session");
+if(!raw)return;
+let s=decode(raw);
+if(!s)return;
+if(Date.now()-s.t>7*24*3600000)return;
+let u=USERS.find(x=>x.username===s.u);
+if(!u)return;
+CURRENT_USER={username:u.username,isAdmin:u.isAdmin||false}
+}
+
+function esc(s){return(s||"").replace(/[&<>]/g,m=>m==="&"?"&amp;":m==="<"?"&lt;":"&gt;")}
+function can(a){if(!CURRENT_USER)return false;if(CURRENT_USER.isAdmin)return true;return CURRENT_USER.username===a}
+
+function render(){
+let c=document.getElementById("newsContainer");
+
+if(!CURRENT_USER){
+c.innerHTML=`<div class="empty-news">🔐 Доступ ограничен<br><br><button onclick="showAuth()" class="btn-primary">Войти</button></div>`;
+return
+}
+
+let list=NEWS[CURRENT_CAT]||[];
+
+if(!list.length){
+c.innerHTML=`<div class="empty-news">📭 Нет новостей</div>`;
+return
+}
+
+c.innerHTML=list.map(i=>`
+<div class="news-card">
+<div class="news-title">${esc(i.title)}</div>
+<div class="news-desc">${esc(i.desc)}</div>
+${i.image?`<img src="${i.image}" class="news-img">`:""}
+<div class="news-meta">${i.date} | ${esc(i.author)}</div>
+<button class="delete-news" data-id="${i.id}" ${can(i.author)?"":"disabled"}>Удалить</button>
+</div>`).join("");
+
+document.querySelectorAll(".delete-news").forEach(b=>{
+if(b.disabled)return;
+b.onclick=()=>{
+let id=parseInt(b.dataset.id);
+let arr=NEWS[CURRENT_CAT];
+let item=arr.find(x=>x.id===id);
+if(!item||!can(item.author))return;
+NEWS[CURRENT_CAT]=arr.filter(x=>x.id!==id);
+saveNews();
+render()
+}
+})
+}
+
+function showAuth(){
+let m=document.createElement("div");
+m.className="modal-overlay";
+m.innerHTML=`
+<div class="modal-box">
+<h2>Вход</h2>
+<input id="loginUser" placeholder="Ник">
+<input id="loginPass" type="password" placeholder="Пароль">
+<button id="loginBtn" class="btn-primary">Войти</button>
+<button id="regBtn" class="btn-secondary">Регистрация</button>
+</div>`;
+document.body.appendChild(m);
+
+m.querySelector("#loginBtn").onclick=()=>{
+let u=m.querySelector("#loginUser").value.trim();
+let p=m.querySelector("#loginPass").value;
+let found=USERS.find(x=>x.username===u&&x.password===hash(p));
+if(!found){alert("Ошибка входа");return}
+CURRENT_USER={username:found.username,isAdmin:found.isAdmin||false};
+saveSession();
+m.remove();
+updateUI();
+render()
+};
+
+m.querySelector("#regBtn").onclick=()=>{
+let u=m.querySelector("#loginUser").value.trim();
+let p=m.querySelector("#loginPass").value;
+if(u.length<3||p.length<4){alert("Слишком коротко");return}
+if(USERS.find(x=>x.username===u)){alert("Ник занят");return}
+USERS.push({username:u,password:hash(p),isAdmin:false});
+saveUsers();
+CURRENT_USER={username:u,isAdmin:false};
+saveSession();
+m.remove();
+updateUI();
+render()
+};
+
+m.onclick=e=>{if(e.target===m)m.remove()}
+}
+
+function showAdd(){
+if(!CURRENT_USER){showAuth();return}
+
+let m=document.createElement("div");
+m.className="modal-overlay";
+m.innerHTML=`
+<div class="modal-box">
+<h2>Новая новость</h2>
+<input id="t" placeholder="Название">
+<textarea id="d" placeholder="Описание"></textarea>
+<select id="c">
+<option value="concepts">Концепты</option>
+<option value="builds">Постройки</option>
+<option value="arts">Арты</option>
+</select>
+<input type="file" id="f">
+<button id="ok" class="btn-primary">Опубликовать</button>
+</div>`;
+document.body.appendChild(m);
+
+let img=null;
+
+m.querySelector("#f").onchange=e=>{
+let file=e.target.files[0];
+if(file&&file.type.startsWith("image/")&&file.size<2*1024*1024){
+let r=new FileReader();
+r.onload=x=>img=x.target.result;
+r.readAsDataURL(file)
+}
+};
+
+m.querySelector("#ok").onclick=()=>{
+let t=m.querySelector("#t").value.trim();
+let d=m.querySelector("#d").value.trim();
+let c=m.querySelector("#c").value;
+if(!t||!d)return;
+
+NEWS[c].unshift({
+id:Date.now()+Math.random(),
+title:t,
+desc:d,
+date:new Date().toLocaleDateString(),
+author:CURRENT_USER.username,
+image:img
+});
+
+if(NEWS[c].length>100)NEWS[c].pop();
+
+saveNews();
+
+if(CURRENT_CAT===c)render();
+
+m.remove()
+};
+
+m.onclick=e=>{if(e.target===m)m.remove()}
+}
+
+function updateUI(){
+let p=document.getElementById("userPanel");
+if(CURRENT_USER)p.innerHTML=`🐔 ${esc(CURRENT_USER.username)} ${CURRENT_USER.isAdmin?"👑":""}`;
+else p.innerHTML="🔒 Не авторизован"
+}
+
+function init(){
+loadData();
+loadSession();
+updateUI();
+
+document.querySelectorAll(".cat-btn").forEach(b=>{
+b.onclick=()=>{
+if(!CURRENT_USER){showAuth();return}
+document.querySelectorAll(".cat-btn").forEach(x=>x.classList.remove("active"));
+b.classList.add("active");
+CURRENT_CAT=b.dataset.cat;
+render()
+}
+});
+
+document.querySelector(".cat-btn").classList.add("active");
+
+document.getElementById("addBtn").onclick=showAdd;
+document.getElementById("settingsBtn").onclick=()=>CURRENT_USER?alert(CURRENT_USER.username):showAuth();
+document.getElementById("logoutBtn").onclick=()=>{CURRENT_USER=null;saveSession();updateUI();render()};
+
+render()
+}
+
+init();
 </script>
 
 </body>
