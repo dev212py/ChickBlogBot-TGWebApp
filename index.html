@@ -746,8 +746,8 @@
     document.body.appendChild(modal);
     
     let imageBase64 = null;
-    let fileInput = modal.querySelector('#postImg');
-    let preview = modal.querySelector('#imgPreview');
+    let fileInput = document.getElementById('postImg');
+    let preview = document.getElementById('imgPreview');
     
     fileInput.onchange = function(e) {
         let file = e.target.files[0];
@@ -781,16 +781,16 @@
         }
     };
     
-    let submitBtn = modal.querySelector('#submitPost');
-    let cancelBtn = modal.querySelector('#cancelPost');
+    let submitBtn = document.getElementById('submitPost');
+    let cancelBtn = document.getElementById('cancelPost');
     
     submitBtn.onclick = function(e) {
         e.preventDefault();
         e.stopPropagation();
         
-        let title = modal.querySelector('#postTitle').value.trim();
-        let desc = modal.querySelector('#postDesc').value.trim();
-        let cat = modal.querySelector('#postCat').value;
+        let title = document.getElementById('postTitle').value.trim();
+        let desc = document.getElementById('postDesc').value.trim();
+        let cat = document.getElementById('postCat').value;
         
         if (!title) { 
             alert('Введите название'); 
@@ -817,6 +817,7 @@
         if (currentCategory === cat) {
             renderContent();
         }
+        
         modal.remove();
         alert('✅ Пост опубликован!');
     };
