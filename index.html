@@ -385,91 +385,122 @@
 </div>
 
 <script>
+    // ========== ШИФРОВАНИЕ ==========
+    const SECRET_KEY = 'cg_secure_key_2026_hwbwcs';
+    
+    function encrypt(text) {
+        if (!text) return '';
+        let result = '';
+        for (let i = 0; i < text.length; i++) {
+            let charCode = text.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length);
+            result += String.fromCharCode(charCode);
+        }
+        return btoa(result);
+    }
+    
+    function decrypt(encrypted) {
+        if (!encrypted) return '';
+        try {
+            let decoded = atob(encrypted);
+            let result = '';
+            for (let i = 0; i < decoded.length; i++) {
+                let charCode = decoded.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length);
+                result += String.fromCharCode(charCode);
+            }
+            return result;
+        } catch(e) {
+            return '';
+        }
+    }
+    
     // ========== ДАННЫЕ ==========
     let CURRENT_USER = null;
     let currentCategory = 'arts';
-    
     let users = [];
-    let contentData = {
-        arts: [],
-        buildings: [],
-        concepts: []
-    };
+    let contentData = { arts: [], buildings: [], concepts: [] };
     
-    // ========== ЗАГРУЗКА/СОХРАНЕНИЕ ==========
+    // ========== ЗАГРУЗКА/СОХРАНЕНИЕ С ШИФРОВАНИЕМ ==========
     function loadAllData() {
-        // Загрузка пользователей
-        let usersRaw = localStorage.getItem('cg_users_final');
-        if (usersRaw) {
+        // Загрузка пользователей (зашифровано)
+        let usersEncrypted = localStorage.getItem('cg_users_encrypted');
+        if (usersEncrypted) {
             try {
-                users = JSON.parse(usersRaw);
-            } catch(e) {}
+                let usersDecrypted = decrypt(usersEncrypted);
+                users = JSON.parse(usersDecrypted);
+            } catch(e) { users = []; }
         }
+        
         if (!users || users.length === 0) {
+            // Создаём админа с ЗАШИФРОВАННЫМ паролем
             users = [{
                 id: Date.now(),
                 username: 'hwbwcs',
-                password: '20q12w21e',
+                password: encrypt('20q12w21e'),
                 isAdmin: true
             }];
-            localStorage.setItem('cg_users_final', JSON.stringify(users));
+            saveUsers();
         }
         
-        // Загрузка постов
-        let postsRaw = localStorage.getItem('cg_posts_final');
-        if (postsRaw) {
+        // Загрузка постов (зашифровано)
+        let postsEncrypted = localStorage.getItem('cg_posts_encrypted');
+        if (postsEncrypted) {
             try {
-                contentData = JSON.parse(postsRaw);
+                let postsDecrypted = decrypt(postsEncrypted);
+                contentData = JSON.parse(postsDecrypted);
             } catch(e) {}
         }
         if (!contentData.arts) contentData.arts = [];
         if (!contentData.buildings) contentData.buildings = [];
         if (!contentData.concepts) contentData.concepts = [];
         
-        // Загрузка сессии
-        let sessionRaw = localStorage.getItem('cg_session_final');
-        if (sessionRaw) {
+        // Загрузка сессии (зашифровано)
+        let sessionEncrypted = localStorage.getItem('cg_session_encrypted');
+        if (sessionEncrypted) {
             try {
-                let session = JSON.parse(sessionRaw);
-                let user = users.find(u => u.username === session.username);
-                if (user && session.time && (Date.now() - session.time < 7*24*3600000)) {
-                    CURRENT_USER = { username: user.username, isAdmin: user.isAdmin };
+                let sessionDecrypted = decrypt(sessionEncrypted);
+                let session = JSON.parse(sessionDecrypted);
+                if (session && (Date.now() - session.time < 7 * 24 * 3600000)) {
+                    let user = users.find(u => u.username === session.username);
+                    if (user) {
+                        CURRENT_USER = { username: user.username, isAdmin: user.isAdmin };
+                    }
                 }
             } catch(e) {}
         }
     }
     
-    function saveAllData() {
-        localStorage.setItem('cg_users_final', JSON.stringify(users));
-        localStorage.setItem('cg_posts_final', JSON.stringify(contentData));
+    function saveUsers() {
+        let usersEncrypted = encrypt(JSON.stringify(users));
+        localStorage.setItem('cg_users_encrypted', usersEncrypted);
+    }
+    
+    function savePosts() {
+        let postsEncrypted = encrypt(JSON.stringify(contentData));
+        localStorage.setItem('cg_posts_encrypted', postsEncrypted);
+    }
+    
+    function saveSession() {
         if (CURRENT_USER) {
-            localStorage.setItem('cg_session_final', JSON.stringify({
-                username: CURRENT_USER.username,
-                time: Date.now()
-            }));
+            let sessionData = { username: CURRENT_USER.username, time: Date.now() };
+            let sessionEncrypted = encrypt(JSON.stringify(sessionData));
+            localStorage.setItem('cg_session_encrypted', sessionEncrypted);
         } else {
-            localStorage.removeItem('cg_session_final');
+            localStorage.removeItem('cg_session_encrypted');
         }
     }
     
-    // ========== СЖАТИЕ ФОТО ==========
-    function compressImage(base64, maxWidth, callback) {
-        let img = new Image();
-        img.onload = function() {
-            let canvas = document.createElement('canvas');
-            let width = img.width;
-            let height = img.height;
-            if (width > maxWidth) {
-                height = (height * maxWidth) / width;
-                width = maxWidth;
-            }
-            canvas.width = width;
-            canvas.height = height;
-            let ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            callback(canvas.toDataURL('image/jpeg', 0.7));
-        };
-        img.src = base64;
+    function saveAllData() {
+        saveUsers();
+        savePosts();
+        saveSession();
+    }
+    
+    // ========== ПРОВЕРКА ПАРОЛЯ ==========
+    function checkPassword(username, password) {
+        let user = users.find(u => u.username === username);
+        if (!user) return false;
+        let decryptedPass = decrypt(user.password);
+        return decryptedPass === password;
     }
     
     // ========== АВТОРИЗАЦИЯ ==========
@@ -514,11 +545,12 @@
         };
         
         modal.querySelector('#doLogin').onclick = () => {
-            let user = modal.querySelector('#loginUser').value.trim();
-            let pass = modal.querySelector('#loginPass').value;
-            let found = users.find(u => u.username === user && u.password === pass);
-            if (found) {
-                CURRENT_USER = { username: found.username, isAdmin: found.isAdmin };
+            let username = modal.querySelector('#loginUser').value.trim();
+            let password = modal.querySelector('#loginPass').value;
+            
+            if (checkPassword(username, password)) {
+                let user = users.find(u => u.username === username);
+                CURRENT_USER = { username: user.username, isAdmin: user.isAdmin };
                 saveAllData();
                 modal.remove();
                 renderContent();
@@ -529,16 +561,22 @@
         };
         
         modal.querySelector('#doReg').onclick = () => {
-            let user = modal.querySelector('#regUser').value.trim();
-            let pass = modal.querySelector('#regPass').value;
-            let pass2 = modal.querySelector('#regPass2').value;
-            if (user.length < 3) { modal.querySelector('#regError').innerText = '❌ Ник минимум 3 символа'; return; }
-            if (pass.length < 4) { modal.querySelector('#regError').innerText = '❌ Пароль минимум 4 символа'; return; }
-            if (pass !== pass2) { modal.querySelector('#regError').innerText = '❌ Пароли не совпадают'; return; }
-            if (users.find(u => u.username === user)) { modal.querySelector('#regError').innerText = '❌ Ник уже занят'; return; }
+            let username = modal.querySelector('#regUser').value.trim();
+            let password = modal.querySelector('#regPass').value;
+            let password2 = modal.querySelector('#regPass2').value;
             
-            users.push({ id: Date.now(), username: user, password: pass, isAdmin: false });
-            CURRENT_USER = { username: user, isAdmin: false };
+            if (username.length < 3) { modal.querySelector('#regError').innerText = '❌ Ник минимум 3 символа'; return; }
+            if (password.length < 4) { modal.querySelector('#regError').innerText = '❌ Пароль минимум 4 символа'; return; }
+            if (password !== password2) { modal.querySelector('#regError').innerText = '❌ Пароли не совпадают'; return; }
+            if (users.find(u => u.username === username)) { modal.querySelector('#regError').innerText = '❌ Ник уже занят'; return; }
+            
+            users.push({
+                id: Date.now(),
+                username: username,
+                password: encrypt(password),
+                isAdmin: false
+            });
+            CURRENT_USER = { username: username, isAdmin: false };
             saveAllData();
             modal.remove();
             renderContent();
@@ -552,7 +590,7 @@
     
     function logout() {
         CURRENT_USER = null;
-        localStorage.removeItem('cg_session_final');
+        localStorage.removeItem('cg_session_encrypted');
         renderContent();
         updateUI();
     }
@@ -611,7 +649,7 @@
         if (!canDelete(post.author)) { alert('⛔ Нельзя удалить чужой пост!'); return; }
         if (confirm('Удалить пост?')) {
             contentData[currentCategory] = contentData[currentCategory].filter(p => p.id !== id);
-            saveAllData();
+            savePosts();
             renderContent();
         }
     };
@@ -672,123 +710,114 @@
         if (post) {
             if (!post.comments) post.comments = [];
             post.comments.push({ author: name, text: text, date: new Date().toLocaleString() });
-            saveAllData();
+            savePosts();
             openPostModal(id);
         }
     };
     
-    // ========== ДОБАВЛЕНИЕ ПОСТА (РАБОТАЕТ!) ==========
+    // ========== ДОБАВЛЕНИЕ ПОСТА ==========
     function showAddModal() {
-        if (!CURRENT_USER) {
-            alert('Сначала войдите');
-            showAuthModal();
-            return;
-        }
-        
-        let modal = document.createElement('div');
-        modal.className = 'modal-overlay';
-        modal.innerHTML = `
-            <div class="modal-box">
-                <h3>➕ Новый пост</h3>
-                <input type="text" id="postTitle" placeholder="Название">
-                <textarea id="postDesc" placeholder="Описание"></textarea>
-                <select id="postCat">
-                    <option value="arts">🎨 Арты</option>
-                    <option value="buildings">🏗️ Постройки</option>
-                    <option value="concepts">💡 Концепты</option>
-                </select>
-                <input type="file" id="postImg" accept="image/*">
-                <img id="imgPreview" class="image-preview">
-                <div class="modal-buttons">
-                    <button id="submitPost" class="btn-primary">✅ Опубликовать</button>
-                    <button id="cancelPost" class="btn-secondary">❌ Отмена</button>
-                </div>
+    if (!CURRENT_USER) {
+        alert('Сначала войдите');
+        showAuthModal();
+        return;
+    }
+    
+    let modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.innerHTML = `
+        <div class="modal-box">
+            <h3>➕ Новый пост</h3>
+            <input type="text" id="postTitle" placeholder="Название">
+            <textarea id="postDesc" placeholder="Описание"></textarea>
+            <select id="postCat">
+                <option value="arts">🎨 Арты</option>
+                <option value="buildings">🏗️ Постройки</option>
+                <option value="concepts">💡 Концепты</option>
+            </select>
+            <input type="file" id="postImg" accept="image/*">
+            <img id="imgPreview" class="image-preview">
+            <div class="modal-buttons">
+                <button id="submitPost" class="btn-primary">✅ Опубликовать</button>
+                <button id="cancelPost" class="btn-secondary">❌ Отмена</button>
             </div>
-        `;
-        document.body.appendChild(modal);
-        
-        let imageBase64 = null;
-        let fileInput = modal.querySelector('#postImg');
-        let preview = modal.querySelector('#imgPreview');
-        
-        fileInput.onchange = function(e) {
-            let file = e.target.files[0];
-            if (file && file.type.startsWith('image/')) {
-                if (file.size > 2 * 1024 * 1024) {
-                    alert('❌ Файл больше 2MB. Сожмите фото.');
-                    return;
-                }
-                let reader = new FileReader();
-                reader.onload = function(ev) {
-                    // Сжимаем фото
-                    let img = new Image();
-                    img.onload = function() {
-                        let canvas = document.createElement('canvas');
-                        let maxW = 800;
-                        let w = img.width;
-                        let h = img.height;
-                        if (w > maxW) {
-                            h = (h * maxW) / w;
-                            w = maxW;
-                        }
-                        canvas.width = w;
-                        canvas.height = h;
-                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                        imageBase64 = canvas.toDataURL('image/jpeg', 0.6);
-                        preview.src = imageBase64;
-                        preview.style.display = 'block';
-                    };
-                    img.src = ev.target.result;
-                };
-                reader.readAsDataURL(file);
+        </div>
+    `;
+    document.body.appendChild(modal);
+    
+    let imageBase64 = null;
+    let fileInput = modal.querySelector('#postImg');
+    let preview = modal.querySelector('#imgPreview');
+    
+    fileInput.onchange = function(e) {
+        let file = e.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+            if (file.size > 2 * 1024 * 1024) {
+                alert('❌ Файл больше 2MB');
+                return;
             }
+            let reader = new FileReader();
+            reader.onload = function(ev) {
+                let img = new Image();
+                img.onload = function() {
+                    let canvas = document.createElement('canvas');
+                    let maxW = 800;
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > maxW) {
+                        h = (h * maxW) / w;
+                        w = maxW;
+                    }
+                    canvas.width = w;
+                    canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                    imageBase64 = canvas.toDataURL('image/jpeg', 0.6);
+                    preview.src = imageBase64;
+                    preview.style.display = 'block';
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+    
+    // ПРЯМОЙ ОБРАБОТЧИК БЕЗ cloneNode
+    let submitBtn = modal.querySelector('#submitPost');
+    submitBtn.onclick = function(e) {
+        e.preventDefault();
+        let title = modal.querySelector('#postTitle').value.trim();
+        let desc = modal.querySelector('#postDesc').value.trim();
+        let cat = modal.querySelector('#postCat').value;
+        
+        if (!title) { alert('Введите название'); return; }
+        if (!desc) { alert('Введите описание'); return; }
+        
+        let newPost = {
+            id: Date.now(),
+            title: title,
+            desc: desc,
+            image: imageBase64 || null,
+            author: CURRENT_USER.username,
+            date: new Date().toLocaleDateString(),
+            comments: []
         };
         
-        let submitBtn = document.getElementById('submitPost');
-        if (submitBtn) {
-            // Убираем старый обработчик если есть
-            let newBtn = submitBtn.cloneNode(true);
-            submitBtn.parentNode.replaceChild(newBtn, submitBtn);
-            
-            newBtn.onclick = function() {
-                let title = document.getElementById('postTitle').value.trim();
-                let desc = document.getElementById('postDesc').value.trim();
-                let cat = document.getElementById('postCat').value;
-                
-                if (!title) { alert('Введите название'); return; }
-                if (!desc) { alert('Введите описание'); return; }
-                
-                let newPost = {
-                    id: Date.now(),
-                    title: title,
-                    desc: desc,
-                    image: imageBase64 || null,
-                    author: CURRENT_USER.username,
-                    date: new Date().toLocaleDateString(),
-                    comments: []
-                };
-                
-                contentData[cat].unshift(newPost);
-                saveAllData();
-                
-                if (currentCategory === cat) {
-                    renderContent();
-                }
-                
-                modal.remove();
-                alert('✅ Пост опубликован!');
-            };
+        contentData[cat].unshift(newPost);
+        savePosts();
+        
+        if (currentCategory === cat) {
+            renderContent();
         }
         
-        let cancelBtn = document.getElementById('cancelPost');
-        if (cancelBtn) {
-            let newCancel = cancelBtn.cloneNode(true);
-            cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
-            newCancel.onclick = () => modal.remove();
-        }
-        
-        modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
-    }
+        modal.remove();
+        alert('✅ Пост опубликован!');
+    };
+    
+    let cancelBtn = modal.querySelector('#cancelPost');
+    cancelBtn.onclick = function() {
+        modal.remove();
+    };
+}
     
     function showSettings() {
         if (!CURRENT_USER) {
@@ -796,7 +825,7 @@
             return;
         }
         let total = contentData.arts.length + contentData.buildings.length + contentData.concepts.length;
-        alert(`👤 ${CURRENT_USER.username}${CURRENT_USER.isAdmin ? ' (АДМИН)' : ''}\n📊 Всего постов: ${total}\n🎨 Арты: ${contentData.arts.length}\n🏗️ Постройки: ${contentData.buildings.length}\n💡 Концепты: ${contentData.concepts.length}`);
+        alert(`👤 ${CURRENT_USER.username}${CURRENT_USER.isAdmin ? ' (АДМИН)' : ''}\n📊 Всего постов: ${total}\n🎨 Арты: ${contentData.arts.length}\n🏗️ Постройки: ${contentData.buildings.length}\n💡 Концепты: ${contentData.concepts.length}\n\n🔒 Все данные зашифрованы`);
     }
     
     function updateUI() {
