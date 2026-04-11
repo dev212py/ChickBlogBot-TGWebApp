@@ -1,287 +1,518 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>CHICKEN GUN NEWS</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#313131;color:#fff;font-family:Segoe UI,Tahoma,sans-serif;min-height:100vh;padding:20px;padding-bottom:120px}
-.header{text-align:center;margin-bottom:25px}
-.title{font-size:42px;font-weight:800}
-.subtitle{color:#aaa;margin-top:5px}
-.user-panel{background:#414141;padding:14px;border-radius:12px;margin:15px 0;text-align:center;border:1px solid #555}
-.category-bar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:20px 0}
-.cat-btn{background:#414141;border:1px solid #555;color:#fff;padding:10px 20px;border-radius:10px;cursor:pointer;transition:.2s}
-.cat-btn.active{background:#5a5a5a;border-color:#777}
-.cat-btn:hover{background:#505050}
-.news-container{background:#414141;border-radius:14px;height:480px;overflow:auto;padding:15px;border:1px solid #555}
-.news-card{background:#313131;border-radius:12px;padding:15px;margin-bottom:15px;border:1px solid #555}
-.news-title{font-size:18px;font-weight:700;color:#e0e0e0}
-.news-desc{font-size:14px;color:#ccc;margin-top:6px}
-.news-meta{font-size:12px;color:#888;margin-top:6px}
-.news-img{max-width:100%;max-height:180px;border-radius:10px;margin-top:10px}
-.delete-news{margin-top:10px;background:#ff4d4d;color:#fff;border:none;padding:6px 12px;border-radius:6px;cursor:pointer}
-.delete-news:disabled{background:#666}
-.empty-news{text-align:center;color:#aaa;padding:50px}
-.fab{position:fixed;right:20px;width:56px;height:56px;border-radius:50%;border:none;color:#fff;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.add{bottom:100px;background:#5a5a5a}
-.set{bottom:170px;background:#4a4a4a}
-.out{bottom:30px;background:#666}
-.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center}
-.modal-box{background:#414141;padding:25px;border-radius:14px;width:90%;max-width:420px;border:1px solid #555}
-.modal-box input,.modal-box textarea,.modal-box select{width:100%;margin-bottom:12px;padding:12px;background:#313131;border:1px solid #555;color:#fff;border-radius:8px}
-.modal-box textarea{min-height:80px}
-.modal-box button{padding:12px;border:none;border-radius:8px;margin-top:5px;width:100%}
-.btn-primary{background:#5a5a5a}
-.btn-secondary{background:#666}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chicken Gun Community</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            color: #e0e0e0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* Верхняя стеклянная панель (фиксированная) */
+        .glass-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(20, 20, 20, 0.75);
+            backdrop-filter: blur(16px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            padding: 12px 24px;
+        }
+
+        .navbar-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #e0e0e0, #9a9a9a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+
+        /* Контейнер кнопок категорий */
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* Стеклянные кнопки */
+        .glass-btn {
+            background: rgba(30, 30, 30, 0.7);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            letter-spacing: 0.3px;
+        }
+
+        .glass-btn:hover {
+            background: rgba(60, 60, 60, 0.8);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .glass-btn.active {
+            background: rgba(80, 80, 80, 0.9);
+            border-color: #6b6b6b;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Правая группа кнопок (добавить + настройки) */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            background: rgba(30, 30, 30, 0.7);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-btn:hover {
+            background: rgba(80, 80, 80, 0.8);
+            transform: scale(1.05);
+            color: white;
+        }
+
+        /* Основной контент с отступом от фиксированной панели */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 24px 40px 24px;
+        }
+
+        /* Виджет со скроллом */
+        .content-widget {
+            background: rgba(25, 25, 25, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            min-height: 500px;
+            max-height: 65vh;
+            overflow-y: auto;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        /* Кастомный скроллбар */
+        .content-widget::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .content-widget::-webkit-scrollbar-track {
+            background: rgba(30, 30, 30, 0.5);
+            border-radius: 10px;
+        }
+
+        .content-widget::-webkit-scrollbar-thumb {
+            background: #5a5a5a;
+            border-radius: 10px;
+        }
+
+        .content-widget::-webkit-scrollbar-thumb:hover {
+            background: #7a7a7a;
+        }
+
+        /* Карточки контента */
+        .content-card {
+            background: rgba(35, 35, 35, 0.8);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border-left: 3px solid #6b6b6b;
+            transition: all 0.2s;
+        }
+
+        .content-card:hover {
+            background: rgba(45, 45, 45, 0.9);
+            transform: translateX(5px);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #d4d4d4;
+            margin-bottom: 8px;
+        }
+
+        .card-desc {
+            font-size: 14px;
+            color: #aaa;
+            line-height: 1.5;
+        }
+
+        .card-meta {
+            font-size: 12px;
+            color: #777;
+            margin-top: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .delete-item {
+            background: rgba(180, 60, 60, 0.6);
+            border: none;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: 0.2s;
+        }
+
+        .delete-item:hover {
+            background: rgba(220, 70, 70, 0.9);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #777;
+        }
+
+        /* Модальное окно */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-box {
+            background: #2a2a2a;
+            border-radius: 24px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid #4a4a4a;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-box h3 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .modal-box input, .modal-box textarea, .modal-box select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            background: #1e1e1e;
+            border: 1px solid #4a4a4a;
+            color: white;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+
+        .modal-box textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-submit {
+            background: #4a4a4a;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background: #6a6a6a;
+        }
+
+        .btn-cancel {
+            background: #3a3a3a;
+            color: #ccc;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .nav-buttons, .action-buttons {
+                justify-content: center;
+            }
+            .main-content {
+                padding-top: 140px;
+            }
+            .glass-btn {
+                padding: 6px 14px;
+                font-size: 13px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<div class="header">
-<div class="title">🐔 CHICKEN GUN NEWS</div>
-<div class="subtitle">WebApp</div>
+<!-- Верхняя стеклянная панель -->
+<div class="glass-navbar">
+    <div class="navbar-container">
+        <div class="logo">⚡ CHICKEN GUN</div>
+        <div class="nav-buttons" id="categoryButtons">
+            <button class="glass-btn" data-cat="arts">🎨 Арты</button>
+            <button class="glass-btn" data-cat="buildings">🏗️ Постройки</button>
+            <button class="glass-btn" data-cat="concepts">💡 Концепты</button>
+        </div>
+        <div class="action-buttons">
+            <button class="icon-btn" id="addBtn">+</button>
+            <button class="icon-btn" id="settingsBtn">⚙️</button>
+        </div>
+    </div>
 </div>
 
-<div class="user-panel" id="userPanel">🔒 Не авторизован</div>
-
-<div class="category-bar">
-<button class="cat-btn" data-cat="concepts">📐 Концепты</button>
-<button class="cat-btn" data-cat="builds">🏗️ Постройки</button>
-<button class="cat-btn" data-cat="arts">🎨 Арты</button>
+<!-- Основной контент -->
+<div class="main-content">
+    <div class="content-widget" id="contentWidget">
+        <div class="empty-state">✨ Выберите категорию и добавьте первый пост</div>
+    </div>
 </div>
-
-<div class="news-container" id="newsContainer"></div>
-
-<button class="fab add" id="addBtn">+</button>
-<button class="fab set" id="settingsBtn">⚙️</button>
-<button class="fab out" id="logoutBtn">🚪</button>
 
 <script>
-const tg=window.Telegram?Telegram.WebApp:null;
-if(tg){tg.expand();tg.ready()}
+    // ========== ДАННЫЕ И ХРАНИЛИЩЕ ==========
+    let currentCategory = 'arts';
+    let contentData = {
+        arts: [],
+        buildings: [],
+        concepts: []
+    };
 
-let USERS=[],NEWS={concepts:[],builds:[],arts:[]},CURRENT_USER=null,CURRENT_CAT="concepts";
+    // Загрузка данных
+    function loadData() {
+        const saved = localStorage.getItem('chicken_gun_dark_data');
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                if (parsed.arts && parsed.buildings && parsed.concepts) {
+                    contentData = parsed;
+                }
+            } catch(e) {}
+        }
+        
+        // Примеры данных, если пусто
+        if (contentData.arts.length === 0) {
+            contentData.arts = [
+                { id: Date.now(), title: "Курица-киборг", desc: "Лазерные глаза и механические крылья", author: "hwbwcs", date: new Date().toLocaleDateString() },
+                { id: Date.now()+1, title: "Тёмный воин", desc: "Арт в мрачных тонах", author: "Artist", date: new Date().toLocaleDateString() }
+            ];
+        }
+        if (contentData.buildings.length === 0) {
+            contentData.buildings = [
+                { id: Date.now()+2, title: "Крепость Теней", desc: "Неприступная база в горах", author: "Builder", date: new Date().toLocaleDateString() }
+            ];
+        }
+        if (contentData.concepts.length === 0) {
+            contentData.concepts = [
+                { id: Date.now()+3, title: "Оружие будущего", desc: "Концепт плазменной пушки", author: "Designer", date: new Date().toLocaleDateString() }
+            ];
+        }
+        saveData();
+    }
 
-function encode(data){return btoa(encodeURIComponent(JSON.stringify(data)))}
-function decode(data){try{return JSON.parse(decodeURIComponent(atob(data)))}catch{return null}}
-function hash(p){return btoa(p.split("").reverse().join("")+"cg")}
+    function saveData() {
+        localStorage.setItem('chicken_gun_dark_data', JSON.stringify(contentData));
+    }
 
-function saveUsers(){localStorage.setItem("cg_users",encode(USERS))}
-function saveNews(){localStorage.setItem("cg_news",encode(NEWS))}
-function saveSession(){
-if(CURRENT_USER)localStorage.setItem("cg_session",encode({u:CURRENT_USER.username,t:Date.now()}))
-else localStorage.removeItem("cg_session")
-}
+    // ========== ОТРИСОВКА КОНТЕНТА ==========
+    function renderContent() {
+        const widget = document.getElementById('contentWidget');
+        const items = contentData[currentCategory];
+        
+        if (!items || items.length === 0) {
+            widget.innerHTML = `<div class="empty-state">📭 Пока ничего нет. Нажмите + чтобы добавить!</div>`;
+            return;
+        }
+        
+        let html = '';
+        for (let item of items) {
+            html += `
+                <div class="content-card" data-id="${item.id}">
+                    <div class="card-title">📌 ${escapeHtml(item.title)}</div>
+                    <div class="card-desc">${escapeHtml(item.desc)}</div>
+                    <div class="card-meta">
+                        <span>✍️ ${escapeHtml(item.author)} | 📅 ${item.date}</span>
+                        <button class="delete-item" data-id="${item.id}">🗑 Удалить</button>
+                    </div>
+                </div>
+            `;
+        }
+        widget.innerHTML = html;
+        
+        // Навешиваем удаление
+        document.querySelectorAll('.delete-item').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const id = parseInt(btn.getAttribute('data-id'));
+                if (confirm('Удалить этот пост?')) {
+                    contentData[currentCategory] = contentData[currentCategory].filter(i => i.id !== id);
+                    saveData();
+                    renderContent();
+                }
+            });
+        });
+    }
 
-function loadData(){
-let rawU=localStorage.getItem("cg_users");
-let u=rawU?decode(rawU):null;
-if(Array.isArray(u))USERS=u;
-if(USERS.length===0){
-USERS=[{username:"admin",password:hash("admin123"),isAdmin:true}];
-saveUsers()
-}
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
 
-let rawN=localStorage.getItem("cg_news");
-let n=rawN?decode(rawN):null;
-if(n&&n.concepts&&n.builds&&n.arts)NEWS=n;
+    // ========== ДОБАВЛЕНИЕ ==========
+    function showAddModal() {
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal-box">
+                <h3>➕ Добавить пост</h3>
+                <input type="text" id="addTitle" placeholder="Название">
+                <textarea id="addDesc" placeholder="Описание"></textarea>
+                <select id="addCategory">
+                    <option value="arts">🎨 Арты</option>
+                    <option value="buildings">🏗️ Постройки</option>
+                    <option value="concepts">💡 Концепты</option>
+                </select>
+                <div class="modal-actions">
+                    <button class="btn-submit" id="submitAdd">Опубликовать</button>
+                    <button class="btn-cancel" id="cancelAdd">Отмена</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        document.getElementById('submitAdd').onclick = () => {
+            const title = document.getElementById('addTitle').value.trim();
+            const desc = document.getElementById('addDesc').value.trim();
+            const cat = document.getElementById('addCategory').value;
+            if (!title || !desc) {
+                alert('Заполните название и описание');
+                return;
+            }
+            const newItem = {
+                id: Date.now(),
+                title: title,
+                desc: desc,
+                author: 'Пользователь',
+                date: new Date().toLocaleDateString()
+            };
+            contentData[cat].unshift(newItem);
+            saveData();
+            if (currentCategory === cat) renderContent();
+            modal.remove();
+            alert('✅ Добавлено!');
+        };
+        
+        document.getElementById('cancelAdd').onclick = () => modal.remove();
+        modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    }
 
-if(NEWS.concepts.length+NEWS.builds.length+NEWS.arts.length===0){
-NEWS={
-concepts:[{id:Date.now(),title:"Курица-киборг",desc:"Лазерные системы",date:new Date().toLocaleDateString(),author:"admin"}],
-builds:[{id:Date.now()+1,title:"Форт",desc:"Защитная база",date:new Date().toLocaleDateString(),author:"admin"}],
-arts:[{id:Date.now()+2,title:"Арт",desc:"Битва",date:new Date().toLocaleDateString(),author:"admin"}]
-};
-saveNews()
-}
-}
+    // ========== НАСТРОЙКИ ==========
+    function showSettings() {
+        let total = contentData.arts.length + contentData.buildings.length + contentData.concepts.length;
+        alert(`⚙️ Статистика\n\n📊 Всего постов: ${total}\n🎨 Арты: ${contentData.arts.length}\n🏗️ Постройки: ${contentData.buildings.length}\n💡 Концепты: ${contentData.concepts.length}\n\n🗑️ Удалять можно любые посты\n💾 Все данные хранятся локально`);
+    }
 
-function loadSession(){
-let raw=localStorage.getItem("cg_session");
-if(!raw)return;
-let s=decode(raw);
-if(!s)return;
-if(Date.now()-s.t>7*24*3600000)return;
-let u=USERS.find(x=>x.username===s.u);
-if(!u)return;
-CURRENT_USER={username:u.username,isAdmin:u.isAdmin||false}
-}
+    // ========== ПЕРЕКЛЮЧЕНИЕ КАТЕГОРИЙ ==========
+    function setActiveCategory(cat) {
+        currentCategory = cat;
+        document.querySelectorAll('.glass-btn[data-cat]').forEach(btn => {
+            if (btn.getAttribute('data-cat') === cat) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+        renderContent();
+    }
 
-function esc(s){return(s||"").replace(/[&<>]/g,m=>m==="&"?"&amp;":m==="<"?"&lt;":"&gt;")}
-function can(a){if(!CURRENT_USER)return false;if(CURRENT_USER.isAdmin)return true;return CURRENT_USER.username===a}
-
-function render(){
-let c=document.getElementById("newsContainer");
-
-if(!CURRENT_USER){
-c.innerHTML=`<div class="empty-news">🔐 Доступ ограничен<br><br><button onclick="showAuth()" class="btn-primary">Войти</button></div>`;
-return
-}
-
-let list=NEWS[CURRENT_CAT]||[];
-
-if(!list.length){
-c.innerHTML=`<div class="empty-news">📭 Нет новостей</div>`;
-return
-}
-
-c.innerHTML=list.map(i=>`
-<div class="news-card">
-<div class="news-title">${esc(i.title)}</div>
-<div class="news-desc">${esc(i.desc)}</div>
-${i.image?`<img src="${i.image}" class="news-img">`:""}
-<div class="news-meta">${i.date} | ${esc(i.author)}</div>
-<button class="delete-news" data-id="${i.id}" ${can(i.author)?"":"disabled"}>Удалить</button>
-</div>`).join("");
-
-document.querySelectorAll(".delete-news").forEach(b=>{
-if(b.disabled)return;
-b.onclick=()=>{
-let id=parseInt(b.dataset.id);
-let arr=NEWS[CURRENT_CAT];
-let item=arr.find(x=>x.id===id);
-if(!item||!can(item.author))return;
-NEWS[CURRENT_CAT]=arr.filter(x=>x.id!==id);
-saveNews();
-render()
-}
-})
-}
-
-function showAuth(){
-let m=document.createElement("div");
-m.className="modal-overlay";
-m.innerHTML=`
-<div class="modal-box">
-<h2>Вход</h2>
-<input id="loginUser" placeholder="Ник">
-<input id="loginPass" type="password" placeholder="Пароль">
-<button id="loginBtn" class="btn-primary">Войти</button>
-<button id="regBtn" class="btn-secondary">Регистрация</button>
-</div>`;
-document.body.appendChild(m);
-
-m.querySelector("#loginBtn").onclick=()=>{
-let u=m.querySelector("#loginUser").value.trim();
-let p=m.querySelector("#loginPass").value;
-let found=USERS.find(x=>x.username===u&&x.password===hash(p));
-if(!found){alert("Ошибка входа");return}
-CURRENT_USER={username:found.username,isAdmin:found.isAdmin||false};
-saveSession();
-m.remove();
-updateUI();
-render()
-};
-
-m.querySelector("#regBtn").onclick=()=>{
-let u=m.querySelector("#loginUser").value.trim();
-let p=m.querySelector("#loginPass").value;
-if(u.length<3||p.length<4){alert("Слишком коротко");return}
-if(USERS.find(x=>x.username===u)){alert("Ник занят");return}
-USERS.push({username:u,password:hash(p),isAdmin:false});
-saveUsers();
-CURRENT_USER={username:u,isAdmin:false};
-saveSession();
-m.remove();
-updateUI();
-render()
-};
-
-m.onclick=e=>{if(e.target===m)m.remove()}
-}
-
-function showAdd(){
-if(!CURRENT_USER){showAuth();return}
-
-let m=document.createElement("div");
-m.className="modal-overlay";
-m.innerHTML=`
-<div class="modal-box">
-<h2>Новая новость</h2>
-<input id="t" placeholder="Название">
-<textarea id="d" placeholder="Описание"></textarea>
-<select id="c">
-<option value="concepts">Концепты</option>
-<option value="builds">Постройки</option>
-<option value="arts">Арты</option>
-</select>
-<input type="file" id="f">
-<button id="ok" class="btn-primary">Опубликовать</button>
-</div>`;
-document.body.appendChild(m);
-
-let img=null;
-
-m.querySelector("#f").onchange=e=>{
-let file=e.target.files[0];
-if(file&&file.type.startsWith("image/")&&file.size<2*1024*1024){
-let r=new FileReader();
-r.onload=x=>img=x.target.result;
-r.readAsDataURL(file)
-}
-};
-
-m.querySelector("#ok").onclick=()=>{
-let t=m.querySelector("#t").value.trim();
-let d=m.querySelector("#d").value.trim();
-let c=m.querySelector("#c").value;
-if(!t||!d)return;
-
-NEWS[c].unshift({
-id:Date.now()+Math.random(),
-title:t,
-desc:d,
-date:new Date().toLocaleDateString(),
-author:CURRENT_USER.username,
-image:img
-});
-
-if(NEWS[c].length>100)NEWS[c].pop();
-
-saveNews();
-
-if(CURRENT_CAT===c)render();
-
-m.remove()
-};
-
-m.onclick=e=>{if(e.target===m)m.remove()}
-}
-
-function updateUI(){
-let p=document.getElementById("userPanel");
-if(CURRENT_USER)p.innerHTML=`🐔 ${esc(CURRENT_USER.username)} ${CURRENT_USER.isAdmin?"👑":""}`;
-else p.innerHTML="🔒 Не авторизован"
-}
-
-function init(){
-loadData();
-loadSession();
-updateUI();
-
-document.querySelectorAll(".cat-btn").forEach(b=>{
-b.onclick=()=>{
-if(!CURRENT_USER){showAuth();return}
-document.querySelectorAll(".cat-btn").forEach(x=>x.classList.remove("active"));
-b.classList.add("active");
-CURRENT_CAT=b.dataset.cat;
-render()
-}
-});
-
-document.querySelector(".cat-btn").classList.add("active");
-
-document.getElementById("addBtn").onclick=showAdd;
-document.getElementById("settingsBtn").onclick=()=>CURRENT_USER?alert(CURRENT_USER.username):showAuth();
-document.getElementById("logoutBtn").onclick=()=>{CURRENT_USER=null;saveSession();updateUI();render()};
-
-render()
-}
-
-init();
+    // ========== ИНИЦИАЛИЗАЦИЯ ==========
+    function init() {
+        loadData();
+        
+        // Назначаем обработчики кнопкам категорий
+        document.querySelectorAll('.glass-btn[data-cat]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const cat = btn.getAttribute('data-cat');
+                setActiveCategory(cat);
+            });
+        });
+        
+        document.getElementById('addBtn').onclick = showAddModal;
+        document.getElementById('settingsBtn').onclick = showSettings;
+        
+        // Активируем первую категорию
+        setActiveCategory('arts');
+    }
+    
+    init();
 </script>
 
 </body>
