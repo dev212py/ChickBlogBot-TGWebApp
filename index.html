@@ -311,9 +311,6 @@
                             <p style="text-align:center;color:var(--text-secondary);margin-bottom:24px;">Chicken Gun Portal</p>
                             <div id="authFormContainer"></div>
                             <div id="authModeSwitcher" class="auth-switch"></div>
-                            <div style="text-align:center;margin-top:8px;">
-                                <button id="debugResetUsers" style="background:transparent;border:0;color:var(--text-secondary);cursor:pointer;font-size:12px;">(Debug) Сбросить users</button>
-                            </div>
                             <div id="globalMessage" class="message-area" style="text-align:center;"></div>
                         </div>
                     `;
@@ -492,6 +489,7 @@
                                 <option value="Other/Text">📄 Текст / Другое</option>
                             </select>
                             <textarea id="postContentTextarea" placeholder="О чём хотите рассказать?" rows="3"></textarea>
+                            <input type="file" id="postImageInput" accept="image/*" style="display:none;margin:8px 0;border-radius:12px;" />
                             <button class="primary" id="publishPostButton">Опубликовать</button>
                         </div>
 
@@ -512,6 +510,14 @@
                         this.activeSortMode = e.target.value;
                         this.renderFeed();
                     });
+                    const categorySelect = document.getElementById('postCategorySelect');
+                    const imageInput = document.getElementById('postImageInput');
+                    function updateImageInputVisibility() {
+                        if (!imageInput) return;
+                        imageInput.style.display = (categorySelect.value === 'Other/Text') ? 'none' : 'block';
+                    }
+                    updateImageInputVisibility();
+                    categorySelect.addEventListener('change', updateImageInputVisibility);
                     document.getElementById('publishPostButton').addEventListener('click', () => this.createNewPost());
                     if (isUserAdmin) {
                         document.getElementById('syncFileSystemButton').addEventListener('click', () => this.syncWithFileSystem());
@@ -520,7 +526,7 @@
                     this.renderFeed();
                 }
 
-                createNewPost() {
+                async createNewPost() {
                     const category = document.getElementById('postCategorySelect').value;
                     const content = document.getElementById('postContentTextarea').value.trim();
                     if (!content) {
@@ -528,11 +534,28 @@
                         return;
                     }
 
+                    let imageData = null;
+                    // Only accept images for categories other than Other/Text
+                    if (category !== 'Other/Text') {
+                        const fileInput = document.getElementById('postImageInput');
+                        if (fileInput && fileInput.files && fileInput.files[0]) {
+                            try {
+                                imageData = await new Promise((resolve) => {
+                                    const reader = new FileReader();
+                                    reader.onload = () => resolve(reader.result);
+                                    reader.onerror = () => resolve(null);
+                                    reader.readAsDataURL(fileInput.files[0]);
+                                });
+                            } catch (e) { imageData = null; }
+                        }
+                    }
+
                     const newPost = {
                         id: Date.now() + '-' + Math.random().toString(36).substring(2, 9),
                         author: this.currentUser.nickname,
                         category: category,
                         content: content,
+                        image: imageData,
                         timestamp: Date.now(),
                         rating: 0,
                         votedBy: {}
@@ -540,6 +563,7 @@
                     this.database.posts.push(newPost);
                     this.persistDatabase();
                     document.getElementById('postContentTextarea').value = '';
+                    const fi = document.getElementById('postImageInput'); if (fi) fi.value = '';
                     this.renderFeed();
                 }
 
@@ -625,6 +649,7 @@
                                     ${isAdmin ? `<button class="danger delete-post-button" data-post-id="${post.id}" style="padding:6px 10px;">🗑️</button>` : ''}
                                 </div>
                                 <p style="margin: 12px 0;white-space:pre-wrap;">${post.content}</p>
+                                ${post.image && post.category !== 'Other/Text' ? `<img src="${post.image}" style="max-width:100%; border-radius:12px; margin-top:8px;">` : ''}
                                 <div class="flex-row">
                                     <div style="display:flex;align-items:center;gap:8px;">
                                         <button class="vote-up-button" data-post-id="${post.id}" style="background:${userVote === 1 ? 'var(--success)' : 'var(--bg-element)'};">👍</button>
