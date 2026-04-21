@@ -2,886 +2,704 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CG СООБЩЕСТВО (@chickengunblog)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>CG Сообщество | Chicken Gun</title>
     <style>
+        :root {
+            --bg-dark: #1e1e1e;
+            --bg-panel: #2b2b2b;
+            --bg-element: #414141;
+            --border-light: #444444;
+            --text-primary: #f0f0f0;
+            --text-secondary: #b0b0b0;
+            --accent: #a6885e;
+            --danger: #d9534f;
+            --success: #5cb85c;
+            --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --border-radius: 16px;
+        }
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
         }
-
         body {
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
-            color: #e0e0e0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
             min-height: 100vh;
-        }
-
-        .glass-navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: rgba(20, 20, 20, 0.85);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            z-index: 1000;
-            padding: 12px 24px;
-        }
-
-        .navbar-container {
-            max-width: 1400px;
-            margin: 0 auto;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #e0e0e0, #9a9a9a);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .glass-btn {
-            background: rgba(30, 30, 30, 0.7);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #e0e0e0;
-            padding: 8px 20px;
-            border-radius: 40px;
-            font-size: 15px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-        }
-
-        .glass-btn:hover {
-            background: rgba(60, 60, 60, 0.8);
-            transform: translateY(-2px);
-        }
-
-        .glass-btn.active {
-            background: rgba(80, 80, 80, 0.9);
-            border-color: #6b6b6b;
-            color: white;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .icon-btn {
-            background: rgba(30, 30, 30, 0.7);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #e0e0e0;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
-            transition: all 0.25s ease;
+            padding: 12px 8px;
+            margin: 0;
+            -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-
-        .icon-btn:hover {
-            background: rgba(80, 80, 80, 0.8);
-            transform: scale(1.05);
+        body.light {
+            --bg-dark: #f5f5f7;
+            --bg-panel: #ffffffcc;
+            --bg-element: #e9e9ef;
+            --border-light: #c6c6c8;
+            --text-primary: #1c1c1e;
+            --text-secondary: #3a3a3c;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
         }
-
-        .main-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 100px 24px 40px 24px;
-        }
-
-        .content-widget {
-            background: rgba(25, 25, 25, 0.6);
-            backdrop-filter: blur(8px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            min-height: 500px;
-            max-height: 65vh;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .content-widget::-webkit-scrollbar {
-            width: 8px;
-        }
-        .content-widget::-webkit-scrollbar-track {
-            background: rgba(30, 30, 30, 0.5);
-            border-radius: 10px;
-        }
-        .content-widget::-webkit-scrollbar-thumb {
-            background: #5a5a5a;
-            border-radius: 10px;
-        }
-
-        .post-card {
-            background: rgba(35, 35, 35, 0.8);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
-            border-left: 3px solid #6b6b6b;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .post-card:hover {
-            background: rgba(45, 45, 45, 0.9);
-            transform: translateX(5px);
-        }
-
-        .post-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #d4d4d4;
-            margin-bottom: 8px;
-        }
-
-        .post-desc {
-            font-size: 14px;
-            color: #aaa;
-            line-height: 1.5;
-        }
-
-        .post-image {
-            max-width: 100%;
-            max-height: 200px;
-            border-radius: 12px;
-            margin: 12px 0;
-            cursor: pointer;
-            object-fit: cover;
-        }
-
-        .post-meta {
-            font-size: 12px;
-            color: #777;
-            margin-top: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .delete-post {
-            background: rgba(180, 60, 60, 0.6);
-            border: none;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 11px;
-        }
-
-        .delete-post:hover:not(:disabled) {
-            background: rgba(220, 70, 70, 0.9);
-        }
-
-        .delete-post:disabled {
-            background: rgba(80, 80, 80, 0.5);
-            cursor: not-allowed;
-        }
-
-        .comments-link {
-            color: #9a9a9a;
-            font-size: 12px;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-
-        .comments-link:hover {
-            color: #ffd966;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #777;
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .app-container {
             width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px 16px;
+            border-radius: 28px;
             backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            background: var(--bg-panel);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+            animation: fadeIn 0.25s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        h1, h2, h3 {
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        button, .btn {
+            background: var(--bg-element);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            padding: 12px 20px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            width: fit-content;
+        }
+        button:hover {
+            transform: scale(1.02);
+            background: var(--border-light);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        button.primary {
+            background: var(--accent);
+            border-color: #8b7355;
+            color: white;
+            font-weight: 600;
+        }
+        button.danger {
+            background: var(--danger);
+            border-color: #b52b27;
+            color: white;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 14px 18px;
+            margin: 8px 0 16px;
+            border-radius: 40px;
+            border: 1px solid var(--border-light);
+            background: var(--bg-element);
+            color: var(--text-primary);
+            font-size: 16px;
+            outline: none;
+            transition: border 0.3s, box-shadow 0.3s;
+        }
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(166, 136, 94, 0.3);
+        }
+        .card {
+            background: var(--bg-element);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            margin-bottom: 18px;
+            border: 1px solid var(--border-light);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            transition: transform 0.2s, box-shadow 0.3s;
+            animation: fadeIn 0.2s;
+        }
+        .card:hover {
+            transform: scale(1.01);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .feed-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 16px 0;
+            align-items: center;
+        }
+        .badge {
+            background: var(--accent);
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .flex-row {
             display: flex;
             align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            padding: 20px;
-        }
-
-        .modal-box {
-            background: #2a2a2a;
-            border-radius: 24px;
-            padding: 30px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 85vh;
-            overflow-y: auto;
-            border: 1px solid #4a4a4a;
-        }
-
-        .modal-box h3 {
-            color: white;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .modal-box input, .modal-box textarea, .modal-box select {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            background: #1e1e1e;
-            border: 1px solid #4a4a4a;
-            color: white;
-            border-radius: 12px;
-            font-size: 14px;
-        }
-
-        .modal-box textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        .modal-box label {
-            color: #aaa;
-            margin-bottom: 5px;
-            display: block;
-            font-size: 13px;
-        }
-
-        .image-preview {
-            max-width: 100%;
-            max-height: 150px;
-            border-radius: 12px;
-            margin-top: 10px;
-            display: none;
-        }
-
-        .modal-buttons {
-            display: flex;
+            justify-content: space-between;
             gap: 12px;
-            margin-top: 20px;
-        }
-
-        .modal-buttons button {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .btn-primary {
-            background: #4CAF50;
-            color: white;
-        }
-
-        .btn-secondary {
-            background: #555;
-            color: white;
-        }
-
-        .comment {
-            background: #1e1e1e;
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 10px;
-        }
-
-        .comment-author {
-            color: #ffd966;
-            font-size: 13px;
-            font-weight: bold;
-        }
-
-        .comment-text {
-            color: #bbb;
-            font-size: 13px;
-            margin-top: 5px;
-        }
-
-        .add-comment {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
             flex-wrap: wrap;
         }
-
-        .add-comment input {
-            flex: 1;
-            padding: 10px;
-            background: #1e1e1e;
-            border: 1px solid #4a4a4a;
-            color: white;
-            border-radius: 12px;
-        }
-
-        .add-comment button {
-            background: #4a4a4a;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 12px;
-            cursor: pointer;
-        }
-
-        .modal-close {
-            background: #6b6b6b;
+        .auth-switch {
             margin-top: 20px;
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 12px;
-            color: white;
+            text-align: center;
+        }
+        .link {
+            color: var(--accent);
+            text-decoration: underline;
             cursor: pointer;
+            font-weight: 500;
+        }
+        .header {
+            margin-bottom: 20px;
+        }
+        .comment-section {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-light);
+        }
+        @media (max-width: 480px) {
+            .app-container { padding: 16px 12px; }
+            button { padding: 10px 16px; }
+        }
+        .message-area {
+            min-height: 24px;
+            margin: 8px 0;
+            font-size: 14px;
         }
     </style>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
+    <div id="applicationRoot" class="app-container"></div>
+    <script>
+        (function(){
+            const tg = window.Telegram?.WebApp;
+            if (tg) {
+                tg.expand();
+                tg.ready();
+                tg.setHeaderColor('#2b2b2b');
+                tg.setBackgroundColor('#1e1e1e');
+            }
 
-<div class="glass-navbar">
-    <div class="navbar-container">
-        <div class="logo">CG СООБЩЕСТВО</div>
-        <div class="nav-buttons" id="categoryButtons">
-            <button class="glass-btn" data-cat="arts">🎨 Арты</button>
-            <button class="glass-btn" data-cat="buildings">🏗️ Постройки</button>
-            <button class="glass-btn" data-cat="concepts">💡 Концепты</button>
-        </div>
-        <div class="action-buttons">
-            <button class="icon-btn" id="addBtn">+</button>
-            <button class="icon-btn" id="settingsBtn">⚙️</button>
-        </div>
-    </div>
-</div>
+            const ADMIN_NICKNAME_HASH = '459998e3d24d2f494fb63c5c108eeb5241658cc9daf6bce106afa2b9b9a42a02';
+            const ADMIN_PASSWORD_HASH = '84bae3df73e27cbbe45c1bd2517c2d229d046acd62d45628d8d9ae7c0b2d6b59';
 
-<div class="main-content">
-    <div class="content-widget" id="contentWidget">
-        <div class="empty-state">✨ Выберите категорию и добавьте первый пост</div>
-    </div>
-</div>
+            const STORAGE_KEYS = {
+                USERS: 'cg_users_registry',
+                DATABASE: 'cg_main_database',
+                SESSION: 'cg_current_session',
+                THEME: 'cg_ui_theme'
+            };
 
-<script>
-    // ========== ИСПРАВЛЕННОЕ ШИФРОВАНИЕ (поддержка кириллицы) ==========
-const SECRET_KEY = 'cg_secure_key_2026_hwbwcs';
+            class ChickenGunPortal {
+                constructor(rootElement) {
+                    this.root = rootElement;
+                    this.database = { posts: [], comments: [] };
+                    this.currentUser = null;
+                    this.fileSystemHandle = null;
+                    this.activeSortMode = 'newest';
+                    this.uiTheme = localStorage.getItem(STORAGE_KEYS.THEME) || 'dark';
+                    this.applyTheme();
+                    this.initializeDatabase();
+                    this.restoreSession();
+                    this.render();
+                }
 
-function encrypt(text) {
-    if (!text) return '';
-    try {
-        // Кодируем UTF-8 в Base64
-        let utf8Bytes = unescape(encodeURIComponent(text));
-        let binary = '';
-        for (let i = 0; i < utf8Bytes.length; i++) {
-            let charCode = utf8Bytes.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length);
-            binary += String.fromCharCode(charCode);
-        }
-        return btoa(binary);
-    } catch(e) {
-        console.error('Encrypt error:', e);
-        return '';
-    }
-}
+                async computeSHA256(inputString) {
+                    const encoder = new TextEncoder();
+                    const data = encoder.encode(inputString);
+                    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+                }
 
-function decrypt(encrypted) {
-    if (!encrypted) return '';
-    try {
-        let binary = atob(encrypted);
-        let utf8Bytes = '';
-        for (let i = 0; i < binary.length; i++) {
-            let charCode = binary.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length);
-            utf8Bytes += String.fromCharCode(charCode);
-        }
-        return decodeURIComponent(escape(utf8Bytes));
-    } catch(e) {
-        console.error('Decrypt error:', e);
-        return '';
-    }
-}
-    
-    // ========== ДАННЫЕ ==========
-    let CURRENT_USER = null;
-    let currentCategory = 'arts';
-    let users = [];
-    let contentData = { arts: [], buildings: [], concepts: [] };
-    
-    // ========== ЗАГРУЗКА/СОХРАНЕНИЕ С ШИФРОВАНИЕМ ==========
-    function loadAllData() {
-        // Загрузка пользователей (зашифровано)
-        let usersEncrypted = localStorage.getItem('cg_users_encrypted');
-        if (usersEncrypted) {
-            try {
-                let usersDecrypted = decrypt(usersEncrypted);
-                users = JSON.parse(usersDecrypted);
-            } catch(e) { users = []; }
-        }
-        
-        if (!users || users.length === 0) {
-            // Создаём админа с ЗАШИФРОВАННЫМ паролем
-            users = [{
-                id: Date.now(),
-                username: 'hwbwcs',
-                password: encrypt('20q12w21e'),
-                isAdmin: true
-            }];
-            saveUsers();
-        }
-        
-        // Загрузка постов (зашифровано)
-        let postsEncrypted = localStorage.getItem('cg_posts_encrypted');
-        if (postsEncrypted) {
-            try {
-                let postsDecrypted = decrypt(postsEncrypted);
-                contentData = JSON.parse(postsDecrypted);
-            } catch(e) {}
-        }
-        if (!contentData.arts) contentData.arts = [];
-        if (!contentData.buildings) contentData.buildings = [];
-        if (!contentData.concepts) contentData.concepts = [];
-        
-        // Загрузка сессии (зашифровано)
-        let sessionEncrypted = localStorage.getItem('cg_session_encrypted');
-        if (sessionEncrypted) {
-            try {
-                let sessionDecrypted = decrypt(sessionEncrypted);
-                let session = JSON.parse(sessionDecrypted);
-                if (session && (Date.now() - session.time < 7 * 24 * 3600000)) {
-                    let user = users.find(u => u.username === session.username);
-                    if (user) {
-                        CURRENT_USER = { username: user.username, isAdmin: user.isAdmin };
+                initializeDatabase() {
+                    const savedDatabase = localStorage.getItem(STORAGE_KEYS.DATABASE);
+                    if (savedDatabase) {
+                        try { this.database = JSON.parse(savedDatabase); } catch (e) { this.database = { posts: [], comments: [] }; }
+                    } else {
+                        this.database = { posts: [], comments: [] };
+                    }
+                    let usersRegistry = localStorage.getItem(STORAGE_KEYS.USERS);
+                    if (!usersRegistry) {
+                        const defaultAdminUser = {};
+                        defaultAdminUser[ADMIN_NICKNAME_HASH] = { passwordHash: ADMIN_PASSWORD_HASH, role: 'admin' };
+                        localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(defaultAdminUser));
+                    } else {
+                        const users = JSON.parse(usersRegistry);
+                        // Migrate old admin key and update password
+                        if (users['hwbwcs']) {
+                            users[ADMIN_NICKNAME_HASH] = { passwordHash: ADMIN_PASSWORD_HASH, role: 'admin' };
+                            delete users['hwbwcs'];
+                            localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+                        }
                     }
                 }
-            } catch(e) {}
-        }
-    }
-    
-    function saveUsers() {
-        let usersEncrypted = encrypt(JSON.stringify(users));
-        localStorage.setItem('cg_users_encrypted', usersEncrypted);
-    }
-    
-    function savePosts() {
-        let postsEncrypted = encrypt(JSON.stringify(contentData));
-        localStorage.setItem('cg_posts_encrypted', postsEncrypted);
-    }
-    
-    function saveSession() {
-        if (CURRENT_USER) {
-            let sessionData = { username: CURRENT_USER.username, time: Date.now() };
-            let sessionEncrypted = encrypt(JSON.stringify(sessionData));
-            localStorage.setItem('cg_session_encrypted', sessionEncrypted);
-        } else {
-            localStorage.removeItem('cg_session_encrypted');
-        }
-    }
-    
-    function saveAllData() {
-        saveUsers();
-        savePosts();
-        saveSession();
-    }
-    
-    // ========== ПРОВЕРКА ПАРОЛЯ ==========
-    function checkPassword(username, password) {
-        let user = users.find(u => u.username === username);
-        if (!user) return false;
-        let decryptedPass = decrypt(user.password);
-        return decryptedPass === password;
-    }
-    
-    // ========== АВТОРИЗАЦИЯ ==========
-    function showAuthModal() {
-        let modal = document.createElement('div');
-        modal.className = 'modal-overlay';
-        modal.innerHTML = `
-            <div class="modal-box">
-                <h3>🔐 Вход / Регистрация</h3>
-                <div style="display:flex; gap:10px; margin-bottom:20px;">
-                    <button id="showLoginBtn" style="flex:1; padding:10px; background:#4a4a4a; border:none; border-radius:12px; color:white; cursor:pointer;">Вход</button>
-                    <button id="showRegBtn" style="flex:1; padding:10px; background:#3a3a3a; border:none; border-radius:12px; color:white; cursor:pointer;">Регистрация</button>
-                </div>
-                <div id="loginPanel">
-                    <input type="text" id="loginUser" placeholder="Никнейм">
-                    <input type="password" id="loginPass" placeholder="Пароль">
-                    <div id="loginError" style="color:#ff8888; font-size:12px; margin-bottom:10px;"></div>
-                    <button id="doLogin" class="btn-primary" style="width:100%;">Войти</button>
-                </div>
-                <div id="regPanel" style="display:none;">
-                    <input type="text" id="regUser" placeholder="Никнейм (мин 3)">
-                    <input type="password" id="regPass" placeholder="Пароль (мин 4)">
-                    <input type="password" id="regPass2" placeholder="Повторите пароль">
-                    <div id="regError" style="color:#ff8888; font-size:12px; margin-bottom:10px;"></div>
-                    <button id="doReg" class="btn-primary" style="width:100%;">Зарегистрироваться</button>
-                </div>
-                <button id="closeAuth" class="modal-close" style="margin-top:15px;">Закрыть</button>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        
-        let loginPanel = modal.querySelector('#loginPanel');
-        let regPanel = modal.querySelector('#regPanel');
-        
-        modal.querySelector('#showLoginBtn').onclick = () => {
-            loginPanel.style.display = 'block';
-            regPanel.style.display = 'none';
-        };
-        modal.querySelector('#showRegBtn').onclick = () => {
-            loginPanel.style.display = 'none';
-            regPanel.style.display = 'block';
-        };
-        
-        modal.querySelector('#doLogin').onclick = () => {
-            let username = modal.querySelector('#loginUser').value.trim();
-            let password = modal.querySelector('#loginPass').value;
-            
-            if (checkPassword(username, password)) {
-                let user = users.find(u => u.username === username);
-                CURRENT_USER = { username: user.username, isAdmin: user.isAdmin };
-                saveAllData();
-                modal.remove();
-                renderContent();
-                updateUI();
-            } else {
-                modal.querySelector('#loginError').innerText = '❌ Неверный ник или пароль';
-            }
-        };
-        
-        modal.querySelector('#doReg').onclick = () => {
-            let username = modal.querySelector('#regUser').value.trim();
-            let password = modal.querySelector('#regPass').value;
-            let password2 = modal.querySelector('#regPass2').value;
-            
-            if (username.length < 3) { modal.querySelector('#regError').innerText = '❌ Ник минимум 3 символа'; return; }
-            if (password.length < 4) { modal.querySelector('#regError').innerText = '❌ Пароль минимум 4 символа'; return; }
-            if (password !== password2) { modal.querySelector('#regError').innerText = '❌ Пароли не совпадают'; return; }
-            if (users.find(u => u.username === username)) { modal.querySelector('#regError').innerText = '❌ Ник уже занят'; return; }
-            
-            users.push({
-                id: Date.now(),
-                username: username,
-                password: encrypt(password),
-                isAdmin: false
-            });
-            CURRENT_USER = { username: username, isAdmin: false };
-            saveAllData();
-            modal.remove();
-            renderContent();
-            updateUI();
-            alert('✅ Регистрация успешна!');
-        };
-        
-        modal.querySelector('#closeAuth').onclick = () => modal.remove();
-        modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
-    }
-    
-    function logout() {
-        CURRENT_USER = null;
-        localStorage.removeItem('cg_session_encrypted');
-        renderContent();
-        updateUI();
-    }
-    
-    function canDelete(author) {
-        if (!CURRENT_USER) return false;
-        if (CURRENT_USER.isAdmin) return true;
-        return CURRENT_USER.username === author;
-    }
-    
-    // ========== ОТРИСОВКА ==========
-    function renderContent() {
-        let widget = document.getElementById('contentWidget');
-        
-        if (!CURRENT_USER) {
-            widget.innerHTML = `<div class="empty-state">🔐 Войдите или зарегистрируйтесь<br>Нажмите ⚙️ для входа</div>`;
-            return;
-        }
-        
-        let items = contentData[currentCategory];
-        if (!items || items.length === 0) {
-            widget.innerHTML = `<div class="empty-state">📭 Пусто. Нажмите + чтобы добавить пост!</div>`;
-            return;
-        }
-        
-        let html = '';
-        for (let item of items) {
-            html += `
-                <div class="post-card">
-                    <div class="post-title">📌 ${escapeHtml(item.title)}</div>
-                    <div class="post-desc">${escapeHtml(item.desc)}</div>
-                    ${item.image ? `<img src="${item.image}" class="post-image" onclick="event.stopPropagation(); openFullImage('${item.image}')">` : ''}
-                    <div class="post-meta">
-                        <span>✍️ ${escapeHtml(item.author)} ${item.author === 'hwbwcs' ? '👑' : ''} | 📅 ${item.date}</span>
-                        <div>
-                            <span class="comments-link" onclick="event.stopPropagation(); openPostModal(${item.id})">💬 ${item.comments?.length || 0} комм.</span>
-                            <button class="delete-post" onclick="event.stopPropagation(); deletePost(${item.id})" ${!canDelete(item.author) ? 'disabled' : ''}>🗑 Удалить</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        widget.innerHTML = html;
-    }
-    
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            return m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;';
-        });
-    }
-    
-    window.deletePost = function(id) {
-        let post = contentData[currentCategory].find(p => p.id === id);
-        if (!post) return;
-        if (!canDelete(post.author)) { alert('⛔ Нельзя удалить чужой пост!'); return; }
-        if (confirm('Удалить пост?')) {
-            contentData[currentCategory] = contentData[currentCategory].filter(p => p.id !== id);
-            savePosts();
-            renderContent();
-        }
-    };
-    
-    window.openFullImage = function(src) {
-        let modal = document.createElement('div');
-        modal.className = 'modal-overlay';
-        modal.innerHTML = `<div class="modal-box" style="text-align:center;"><img src="${src}" style="max-width:100%; max-height:70vh; border-radius:16px;"><button class="modal-close" style="margin-top:20px;" onclick="this.closest('.modal-overlay').remove()">Закрыть</button></div>`;
-        document.body.appendChild(modal);
-        modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
-    };
-    
-    window.openPostModal = function(id) {
-        let post = contentData[currentCategory].find(p => p.id === id);
-        if (!post) return;
-        
-        let modal = document.createElement('div');
-        modal.className = 'modal-overlay';
-        
-        let commentsHtml = '';
-        if (post.comments && post.comments.length > 0) {
-            for (let c of post.comments) {
-                commentsHtml += `<div class="comment"><div class="comment-author">${escapeHtml(c.author)}</div><div class="comment-text">${escapeHtml(c.text)}</div><div style="font-size:10px; color:#666;">${c.date}</div></div>`;
-            }
-        } else {
-            commentsHtml = '<div style="text-align:center; padding:20px; color:#777;">Нет комментариев</div>';
-        }
-        
-        modal.innerHTML = `
-            <div class="modal-box">
-                <h3>${escapeHtml(post.title)}</h3>
-                <div style="color:#aaa;">${escapeHtml(post.desc)}</div>
-                ${post.image ? `<img src="${post.image}" style="max-width:100%; border-radius:16px; margin:15px 0; cursor:pointer;" onclick="openFullImage('${post.image}')">` : ''}
-                <div style="font-size:12px; color:#777;">✍️ ${escapeHtml(post.author)} | 📅 ${post.date}</div>
-                <div class="comments-section" style="margin-top:20px; border-top:1px solid #4a4a4a; padding-top:20px;">
-                    <h4>💬 Комментарии (${post.comments?.length || 0})</h4>
-                    <div id="commentsList">${commentsHtml}</div>
-                    <div class="add-comment">
-                        <input type="text" id="commentName" placeholder="Имя" value="${escapeHtml(CURRENT_USER?.username || 'Гость')}">
-                        <input type="text" id="commentText" placeholder="Комментарий...">
-                        <button onclick="addComment(${id}, '${currentCategory}')">Отправить</button>
-                    </div>
-                </div>
-                <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">Закрыть</button>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
-    };
-    
-    window.addComment = function(id, category) {
-        let modal = document.querySelector('.modal-overlay');
-        let name = modal.querySelector('#commentName').value.trim() || 'Гость';
-        let text = modal.querySelector('#commentText').value.trim();
-        if (!text) { alert('Напишите комментарий'); return; }
-        
-        let post = contentData[category].find(p => p.id === id);
-        if (post) {
-            if (!post.comments) post.comments = [];
-            post.comments.push({ author: name, text: text, date: new Date().toLocaleString() });
-            savePosts();
-            openPostModal(id);
-        }
-    };
-    
-    // ========== ДОБАВЛЕНИЕ ПОСТА ==========
-    function showAddModal() {
-    if (!CURRENT_USER) {
-        alert('Сначала войдите');
-        showAuthModal();
-        return;
-    }
-    
-    let modal = document.createElement('div');
-    modal.className = 'modal-overlay';
-    modal.innerHTML = `
-        <div class="modal-box">
-            <h3>➕ Новый пост</h3>
-            <input type="text" id="postTitle" placeholder="Название">
-            <textarea id="postDesc" placeholder="Описание"></textarea>
-            <select id="postCat">
-                <option value="arts">🎨 Арты</option>
-                <option value="buildings">🏗️ Постройки</option>
-                <option value="concepts">💡 Концепты</option>
-            </select>
-            <input type="file" id="postImg" accept="image/*">
-            <img id="imgPreview" class="image-preview">
-            <div class="modal-buttons">
-                <button id="submitPost" class="btn-primary">✅ Опубликовать</button>
-                <button id="cancelPost" class="btn-secondary">❌ Отмена</button>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(modal);
-    
-    let imageBase64 = null;
-    let fileInput = document.getElementById('postImg');
-    let preview = document.getElementById('imgPreview');
-    
-    fileInput.onchange = function(e) {
-        let file = e.target.files[0];
-        if (file && file.type.startsWith('image/')) {
-            if (file.size > 2 * 1024 * 1024) {
-                alert('❌ Файл больше 2MB');
-                return;
-            }
-            let reader = new FileReader();
-            reader.onload = function(ev) {
-                let img = new Image();
-                img.onload = function() {
-                    let canvas = document.createElement('canvas');
-                    let maxW = 800;
-                    let w = img.width;
-                    let h = img.height;
-                    if (w > maxW) {
-                        h = (h * maxW) / w;
-                        w = maxW;
-                    }
-                    canvas.width = w;
-                    canvas.height = h;
-                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                    imageBase64 = canvas.toDataURL('image/jpeg', 0.6);
-                    preview.src = imageBase64;
-                    preview.style.display = 'block';
-                };
-                img.src = ev.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-    
-    let submitBtn = document.getElementById('submitPost');
-    let cancelBtn = document.getElementById('cancelPost');
-    
-    submitBtn.onclick = function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        let title = document.getElementById('postTitle').value.trim();
-        let desc = document.getElementById('postDesc').value.trim();
-        let cat = document.getElementById('postCat').value;
-        
-        if (!title) { 
-            alert('Введите название'); 
-            return; 
-        }
-        if (!desc) { 
-            alert('Введите описание'); 
-            return; 
-        }
-        
-        let newPost = {
-            id: Date.now(),
-            title: title,
-            desc: desc,
-            image: imageBase64 || null,
-            author: CURRENT_USER.username,
-            date: new Date().toLocaleDateString(),
-            comments: []
-        };
-        
-        contentData[cat].unshift(newPost);
-        savePosts();
-        
-        if (currentCategory === cat) {
-            renderContent();
-        }
-        
-        modal.remove();
-        alert('✅ Пост опубликован!');
-    };
-    
-    cancelBtn.onclick = function(e) {
-        e.preventDefault();
-        modal.remove();
-    };
-}
-    
-    function showSettings() {
-        if (!CURRENT_USER) {
-            showAuthModal();
-            return;
-        }
-        let total = contentData.arts.length + contentData.buildings.length + contentData.concepts.length;
-        alert(`👤 ${CURRENT_USER.username}${CURRENT_USER.isAdmin ? ' (АДМИН)' : ''}\n📊 Всего постов: ${total}\n🎨 Арты: ${contentData.arts.length}\n🏗️ Постройки: ${contentData.buildings.length}\n💡 Концепты: ${contentData.concepts.length}\n\n🔒 Все данные зашифрованы`);
-    }
-    
-    function updateUI() {
-        let settingsBtn = document.getElementById('settingsBtn');
-        if (CURRENT_USER) {
-            settingsBtn.title = CURRENT_USER.username;
-        } else {
-            settingsBtn.title = 'Войти';
-        }
-    }
-    
-    // ========== ИНИЦИАЛИЗАЦИЯ ==========
-    function init() {
-        loadAllData();
-        
-        document.querySelectorAll('.glass-btn[data-cat]').forEach(btn => {
-            btn.onclick = () => {
-                if (!CURRENT_USER) { showAuthModal(); return; }
-                currentCategory = btn.getAttribute('data-cat');
-                document.querySelectorAll('.glass-btn[data-cat]').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                renderContent();
-            };
-        });
-        
-        document.getElementById('addBtn').onclick = showAddModal;
-        document.getElementById('settingsBtn').onclick = showSettings;
-        
-        if (CURRENT_USER) {
-            renderContent();
-        } else {
-            document.getElementById('contentWidget').innerHTML = `<div class="empty-state">🔐 Нажмите ⚙️ для входа</div>`;
-        }
-        
-        document.querySelector('.glass-btn[data-cat="arts"]').classList.add('active');
-    }
-    
-    init();
-</script>
 
+                restoreSession() {
+                    const sessionData = localStorage.getItem(STORAGE_KEYS.SESSION);
+                    if (sessionData) {
+                        try { this.currentUser = JSON.parse(sessionData); } catch (e) { this.currentUser = null; }
+                    }
+                }
+
+                persistDatabase() {
+                    localStorage.setItem(STORAGE_KEYS.DATABASE, JSON.stringify(this.database));
+                    this.syncWithFileSystem();
+                }
+
+                async syncWithFileSystem() {
+                    if (!this.currentUser || this.currentUser.role !== 'admin') return;
+                    try {
+                        if (!this.fileSystemHandle) {
+                            this.fileSystemHandle = await window.showSaveFilePicker({
+                                suggestedName: 'chicken_gun_database.json',
+                                types: [{ description: 'JSON Database', accept: { 'application/json': ['.json'] } }]
+                            });
+                        }
+                        const writableStream = await this.fileSystemHandle.createWritable();
+                        await writableStream.write(JSON.stringify(this.database, null, 2));
+                        await writableStream.close();
+                    } catch (error) {
+                        console.warn('File sync skipped or failed');
+                    }
+                }
+
+                applyTheme() {
+                    if (this.uiTheme === 'light') document.body.classList.add('light');
+                    else if (this.uiTheme === 'dark') document.body.classList.remove('light');
+                    else {
+                        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                        prefersDark ? document.body.classList.remove('light') : document.body.classList.add('light');
+                    }
+                }
+
+                setTheme(newTheme) {
+                    this.uiTheme = newTheme;
+                    localStorage.setItem(STORAGE_KEYS.THEME, newTheme);
+                    this.applyTheme();
+                    this.render();
+                }
+
+                render() {
+                    if (this.currentUser) {
+                        this.renderMainInterface();
+                    } else {
+                        this.renderAuthenticationScreen();
+                    }
+                }
+
+                renderAuthenticationScreen() {
+                    this.root.innerHTML = `
+                        <div>
+                            <h2 style="text-align:center;">🐔 CG Сообщество</h2>
+                            <p style="text-align:center;color:var(--text-secondary);margin-bottom:24px;">Chicken Gun Portal</p>
+                            <div id="authFormContainer"></div>
+                            <div id="authModeSwitcher" class="auth-switch"></div>
+                            <div style="text-align:center;margin-top:8px;">
+                                <button id="debugResetUsers" style="background:transparent;border:0;color:var(--text-secondary);cursor:pointer;font-size:12px;">(Debug) Сбросить users</button>
+                            </div>
+                            <div id="globalMessage" class="message-area" style="text-align:center;"></div>
+                        </div>
+                    `;
+                    this.displayLoginForm();
+                }
+
+                displayLoginForm() {
+                    const container = document.getElementById('authFormContainer');
+                    const switcher = document.getElementById('authModeSwitcher');
+                    container.innerHTML = `
+                        <input type="text" id="loginNicknameInput" placeholder="Никнейм" autocomplete="off">
+                        <input type="password" id="loginPasswordInput" placeholder="Пароль">
+                        <div class="flex-row">
+                            <label style="display:flex;align-items:center;gap:8px;">
+                                <input type="checkbox" id="rememberMeCheckbox"> Запомнить меня
+                            </label>
+                            <button class="primary" id="performLoginButton">Войти</button>
+                        </div>
+                    `;
+                    switcher.innerHTML = `Нет аккаунта? <span class="link" id="switchToRegisterLink">Создать</span>`;
+                    
+                    document.getElementById('performLoginButton').addEventListener('click', () => this.handleLogin());
+                    document.getElementById('switchToRegisterLink').addEventListener('click', () => this.displayRegistrationForm());
+                    document.getElementById('loginPasswordInput').addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') this.handleLogin();
+                    });
+                }
+
+                displayRegistrationForm() {
+                    const container = document.getElementById('authFormContainer');
+                    const switcher = document.getElementById('authModeSwitcher');
+                    container.innerHTML = `
+                        <input type="text" id="regNicknameInput" placeholder="Придумайте никнейм">
+                        <input type="password" id="regPasswordInput" placeholder="Пароль">
+                        <button class="primary" id="performRegisterButton">Зарегистрироваться</button>
+                    `;
+                    switcher.innerHTML = `Уже есть аккаунт? <span class="link" id="switchToLoginLink">Войти</span>`;
+                    
+                    document.getElementById('performRegisterButton').addEventListener('click', () => this.handleRegistration());
+                    document.getElementById('switchToLoginLink').addEventListener('click', () => this.displayLoginForm());
+                }
+
+                async handleRegistration() {
+                    const nickname = document.getElementById('regNicknameInput')?.value.trim();
+                    const password = document.getElementById('regPasswordInput')?.value;
+                    const messageEl = document.getElementById('globalMessage');
+                    
+                    if (!nickname || !password) {
+                        messageEl.textContent = 'Заполните все поля';
+                        messageEl.style.color = 'var(--danger)';
+                        return;
+                    }
+                    if (password.length < 4) {
+                        messageEl.textContent = 'Пароль должен быть не менее 4 символов';
+                        messageEl.style.color = 'var(--danger)';
+                        return;
+                    }
+
+                    const hashedNickname = await this.computeSHA256(nickname);
+                    const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS) || '{}');
+                    if (users[hashedNickname]) {
+                        messageEl.textContent = 'Этот никнейм уже занят';
+                        messageEl.style.color = 'var(--danger)';
+                        return;
+                    }
+
+                    const passwordHash = await this.computeSHA256(password);
+                    users[hashedNickname] = { passwordHash, role: hashedNickname === ADMIN_NICKNAME_HASH ? 'admin' : 'user' };
+                    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+                    
+                    messageEl.textContent = 'Регистрация успешна! Теперь войдите.';
+                    messageEl.style.color = 'var(--success)';
+                    this.displayLoginForm();
+                }
+
+                async handleLogin() {
+                    const nickname = document.getElementById('loginNicknameInput')?.value.trim();
+                    const password = document.getElementById('loginPasswordInput')?.value;
+                    const rememberMe = document.getElementById('rememberMeCheckbox')?.checked;
+                    const messageEl = document.getElementById('globalMessage');
+
+                    if (!nickname || !password) {
+                        messageEl.textContent = 'Введите никнейм и пароль';
+                        messageEl.style.color = 'var(--danger)';
+                        return;
+                    }
+
+                    const hashedNickname = await this.computeSHA256(nickname);
+                    const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS) || '{}');
+                    let userRecord = users[hashedNickname];
+
+                    // If not found by hashed key, check legacy plain-key entry and migrate it.
+                    if (!userRecord && users[nickname]) {
+                        const legacy = users[nickname];
+                        // If legacy stores plaintext password under 'password' or 'pwd', normalize it.
+                        if (legacy.password && typeof legacy.password === 'string') {
+                            const legacyPlain = legacy.password;
+                            const legacyHash = await this.computeSHA256(legacyPlain);
+                            legacy.passwordHash = legacyHash;
+                            delete legacy.password;
+                        }
+                        // Move to hashed key
+                        users[hashedNickname] = legacy;
+                        delete users[nickname];
+                        localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+                        userRecord = users[hashedNickname];
+                    }
+
+                    if (!userRecord) {
+                        messageEl.textContent = 'Пользователь не найден';
+                        messageEl.style.color = 'var(--danger)';
+                        return;
+                    }
+
+                    const inputHash = await this.computeSHA256(password);
+
+                    // If stored password is plaintext (very old format), upgrade it.
+                    if (!userRecord.passwordHash && userRecord.password && password === userRecord.password) {
+                        userRecord.passwordHash = inputHash;
+                        delete userRecord.password;
+                        users[hashedNickname] = userRecord;
+                        localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+                    }
+
+                    if (inputHash !== userRecord.passwordHash) {
+                        messageEl.textContent = 'Неверный пароль';
+                        messageEl.style.color = 'var(--danger)';
+                        return;
+                    }
+
+                    this.currentUser = { nickname, role: userRecord.role };
+                    if (rememberMe) {
+                        localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(this.currentUser));
+                    } else {
+                        sessionStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(this.currentUser));
+                    }
+                    this.render();
+                }
+
+                handleLogout() {
+                    this.currentUser = null;
+                    localStorage.removeItem(STORAGE_KEYS.SESSION);
+                    sessionStorage.removeItem(STORAGE_KEYS.SESSION);
+                    this.render();
+                }
+
+
+                renderMainInterface() {
+                    const isUserAdmin = this.currentUser.role === 'admin';
+                    this.root.innerHTML = `
+                        <div class="header flex-row">
+                            <h1>🐔 CG Сообщество</h1>
+                            <div style="display:flex;gap:8px;">
+                                <button id="themeToggleButton" title="Сменить тему">${this.uiTheme === 'dark' ? '☀️' : '🌙'}</button>
+                                <button id="logoutActionButton" class="danger">Выйти</button>
+                            </div>
+                        </div>
+                        <p style="margin-bottom:16px;">👤 ${this.currentUser.nickname} ${isUserAdmin ? '(Админ)' : ''}</p>
+                        
+                        <div class="feed-actions">
+                            <select id="sortOrderSelect" style="width:auto;margin:0;">
+                                <option value="newest" ${this.activeSortMode === 'newest' ? 'selected' : ''}>🆕 Новые</option>
+                                <option value="oldest" ${this.activeSortMode === 'oldest' ? 'selected' : ''}>📅 Старые</option>
+                                <option value="rating" ${this.activeSortMode === 'rating' ? 'selected' : ''}>⭐ По рейтингу</option>
+                            </select>
+                            <button id="manualRefreshButton">🔄 Обновить</button>
+                            ${isUserAdmin ? '<button id="syncFileSystemButton">💾 Синх. с файлом</button>' : ''}
+                        </div>
+
+                        <div class="card">
+                            <h3>📝 Новый пост</h3>
+                            <select id="postCategorySelect">
+                                <option value="Concepts">🎨 Концепты</option>
+                                <option value="Arts">🖼️ Арты</option>
+                                <option value="Buildings">🏗️ Постройки</option>
+                                <option value="Other/Text">📄 Текст / Другое</option>
+                            </select>
+                            <textarea id="postContentTextarea" placeholder="О чём хотите рассказать?" rows="3"></textarea>
+                            <button class="primary" id="publishPostButton">Опубликовать</button>
+                        </div>
+
+                        <div id="feedDisplayContainer">
+                            <p style="text-align:center;padding:20px;">Загрузка ленты...</p>
+                        </div>
+                    `;
+
+                    document.getElementById('logoutActionButton').addEventListener('click', () => this.handleLogout());
+                    document.getElementById('themeToggleButton').addEventListener('click', () => {
+                        this.setTheme(this.uiTheme === 'dark' ? 'light' : 'dark');
+                    });
+                    document.getElementById('manualRefreshButton').addEventListener('click', () => {
+                        this.initializeDatabase();
+                        this.renderFeed();
+                    });
+                    document.getElementById('sortOrderSelect').addEventListener('change', (e) => {
+                        this.activeSortMode = e.target.value;
+                        this.renderFeed();
+                    });
+                    document.getElementById('publishPostButton').addEventListener('click', () => this.createNewPost());
+                    if (isUserAdmin) {
+                        document.getElementById('syncFileSystemButton').addEventListener('click', () => this.syncWithFileSystem());
+                    }
+                    
+                    this.renderFeed();
+                }
+
+                createNewPost() {
+                    const category = document.getElementById('postCategorySelect').value;
+                    const content = document.getElementById('postContentTextarea').value.trim();
+                    if (!content) {
+                        alert('Введите текст поста');
+                        return;
+                    }
+
+                    const newPost = {
+                        id: Date.now() + '-' + Math.random().toString(36).substring(2, 9),
+                        author: this.currentUser.nickname,
+                        category: category,
+                        content: content,
+                        timestamp: Date.now(),
+                        rating: 0,
+                        votedBy: {}
+                    };
+                    this.database.posts.push(newPost);
+                    this.persistDatabase();
+                    document.getElementById('postContentTextarea').value = '';
+                    this.renderFeed();
+                }
+
+                deletePostById(postId) {
+                    if (!confirm('Удалить этот пост?')) return;
+                    this.database.posts = this.database.posts.filter(p => p.id !== postId);
+                    this.database.comments = this.database.comments.filter(c => c.postId !== postId);
+                    this.persistDatabase();
+                    this.renderFeed();
+                }
+
+                deleteCommentById(commentId) {
+                    this.database.comments = this.database.comments.filter(c => c.id !== commentId);
+                    this.persistDatabase();
+                    this.renderFeed();
+                }
+
+                voteForPost(postId, delta) {
+                    const post = this.database.posts.find(p => p.id === postId);
+                    if (!post) return;
+                    const voter = this.currentUser.nickname;
+                    const currentVote = post.votedBy[voter] || 0;
+                    
+                    if (currentVote === delta) {
+                        delete post.votedBy[voter];
+                        post.rating -= delta;
+                    } else {
+                        post.rating = post.rating - currentVote + delta;
+                        post.votedBy[voter] = delta;
+                    }
+                    this.persistDatabase();
+                    this.renderFeed();
+                }
+
+                addCommentToPost(postId) {
+                    const inputField = document.querySelector(`[data-comment-input="${postId}"]`);
+                    const commentText = inputField.value.trim();
+                    if (!commentText) return;
+
+                    const newComment = {
+                        id: Date.now() + '-' + Math.random().toString(36).substring(2, 9),
+                        postId: postId,
+                        author: this.currentUser.nickname,
+                        text: commentText,
+                        timestamp: Date.now()
+                    };
+                    this.database.comments.push(newComment);
+                    this.persistDatabase();
+                    this.renderFeed();
+                }
+
+                renderFeed() {
+                    const feedContainer = document.getElementById('feedDisplayContainer');
+                    if (!feedContainer) return;
+
+                    let postsToDisplay = [...this.database.posts];
+                    
+                    if (postsToDisplay.length === 0) {
+                        feedContainer.innerHTML = '<p style="text-align:center;padding:40px;color:var(--text-secondary);">Пока нет постов. Создайте первый!</p>';
+                        return;
+                    }
+
+                    if (this.activeSortMode === 'newest') {
+                        postsToDisplay.sort((a, b) => b.timestamp - a.timestamp);
+                    } else if (this.activeSortMode === 'oldest') {
+                        postsToDisplay.sort((a, b) => a.timestamp - b.timestamp);
+                    } else {
+                        postsToDisplay.sort((a, b) => b.rating - a.rating);
+                    }
+
+                    const isAdmin = this.currentUser.role === 'admin';
+                    
+                    feedContainer.innerHTML = postsToDisplay.map(post => {
+                        const postComments = this.database.comments.filter(c => c.postId === post.id);
+                        const postDate = new Date(post.timestamp).toLocaleString('ru-RU');
+                        const userVote = post.votedBy[this.currentUser.nickname] || 0;
+                        
+                        return `
+                            <div class="card" data-post-id="${post.id}">
+                                <div class="flex-row">
+                                    <span class="badge">${post.category}</span>
+                                    <span style="color: var(--text-secondary);font-size:14px;">${post.author} • ${postDate}</span>
+                                    ${isAdmin ? `<button class="danger delete-post-button" data-post-id="${post.id}" style="padding:6px 10px;">🗑️</button>` : ''}
+                                </div>
+                                <p style="margin: 12px 0;white-space:pre-wrap;">${post.content}</p>
+                                <div class="flex-row">
+                                    <div style="display:flex;align-items:center;gap:8px;">
+                                        <button class="vote-up-button" data-post-id="${post.id}" style="background:${userVote === 1 ? 'var(--success)' : 'var(--bg-element)'};">👍</button>
+                                        <span style="font-weight:bold;">${post.rating}</span>
+                                        <button class="vote-down-button" data-post-id="${post.id}" style="background:${userVote === -1 ? 'var(--danger)' : 'var(--bg-element)'};">👎</button>
+                                    </div>
+                                    <button class="toggle-comments-button" data-post-id="${post.id}">💬 ${postComments.length} коммент.</button>
+                                </div>
+                                <div id="comments-${post.id}" style="display:none;" class="comment-section">
+                                    ${postComments.map(comment => `
+                                        <div style="background:var(--bg-panel); padding:10px; border-radius:20px; margin-bottom:8px;">
+                                            <div class="flex-row">
+                                                <strong>${comment.author}</strong>
+                                                <span style="font-size:12px;color:var(--text-secondary);">${new Date(comment.timestamp).toLocaleTimeString('ru-RU')}</span>
+                                                ${isAdmin ? `<button class="delete-comment-button" data-comment-id="${comment.id}" style="padding:4px 8px;">🗑️</button>` : ''}
+                                            </div>
+                                            <p style="margin-top:6px;">${comment.text}</p>
+                                        </div>
+                                    `).join('')}
+                                    <div class="flex-row" style="margin-top:12px;">
+                                        <input type="text" data-comment-input="${post.id}" placeholder="Написать комментарий...">
+                                        <button class="send-comment-button" data-post-id="${post.id}">➤</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    document.querySelectorAll('.delete-post-button').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            this.deletePostById(btn.dataset.postId);
+                        });
+                    });
+
+                    document.querySelectorAll('.delete-comment-button').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            this.deleteCommentById(btn.dataset.commentId);
+                        });
+                    });
+
+                    document.querySelectorAll('.vote-up-button').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            this.voteForPost(btn.dataset.postId, 1);
+                        });
+                    });
+
+                    document.querySelectorAll('.vote-down-button').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            this.voteForPost(btn.dataset.postId, -1);
+                        });
+                    });
+
+                    document.querySelectorAll('.toggle-comments-button').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const section = document.getElementById(`comments-${btn.dataset.postId}`);
+                            section.style.display = section.style.display === 'none' ? 'block' : 'none';
+                        });
+                    });
+
+                    document.querySelectorAll('.send-comment-button').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            this.addCommentToPost(btn.dataset.postId);
+                        });
+                    });
+                }
+            }
+
+            const rootElement = document.getElementById('applicationRoot');
+            window.appInstance = new ChickenGunPortal(rootElement);
+        })();
+    </script>
 </body>
 </html>
