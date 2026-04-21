@@ -211,13 +211,12 @@
                 constructor(rootElement) {
                     this.root = rootElement;
                     this.database = { posts: [], comments: [] };
-                    this.currentUser = null;
                     this.fileSystemHandle = null;
                     this.activeSortMode = 'newest';
                     this.uiTheme = localStorage.getItem(STORAGE_KEYS.THEME) || 'dark';
+                    this.isAdmin = false; // session-only admin flag
                     this.applyTheme();
                     this.initializeDatabase();
-                    this.restoreSession();
                     this.render();
                 }
 
@@ -264,7 +263,7 @@
                 }
 
                 async syncWithFileSystem() {
-                    if (!this.currentUser || this.currentUser.role !== 'admin') return;
+                    if (!this.isAdmin) return;
                     try {
                         if (!this.fileSystemHandle) {
                             this.fileSystemHandle = await window.showSaveFilePicker({
@@ -297,11 +296,8 @@
                 }
 
                 render() {
-                    if (this.currentUser) {
-                        this.renderMainInterface();
-                    } else {
-                        this.renderAuthenticationScreen();
-                    }
+                    // No registration/login flow: always show main interface.
+                    this.renderMainInterface();
                 }
 
                 renderAuthenticationScreen() {
@@ -459,16 +455,16 @@
 
 
                 renderMainInterface() {
-                    const isUserAdmin = this.currentUser.role === 'admin';
+                    const isUserAdmin = this.isAdmin;
                     this.root.innerHTML = `
                         <div class="header flex-row">
                             <h1>🐔 CG Сообщество</h1>
-                            <div style="display:flex;gap:8px;">
-                                <button id="themeToggleButton" title="Сменить тему">${this.uiTheme === 'dark' ? '☀️' : '🌙'}</button>
-                                <button id="logoutActionButton" class="danger">Выйти</button>
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                    <button id="themeToggleButton" title="Сменить тему">${this.uiTheme === 'dark' ? '☀️' : '🌙'}</button>
+                                    <button id="adminToggleButton" class="primary">${this.isAdmin ? 'Выйти из админ' : 'Войти как админ'}</button>
+                                </div>
                             </div>
-                        </div>
-                        <p style="margin-bottom:16px;">👤 ${this.currentUser.nickname} ${isUserAdmin ? '(Админ)' : ''}</p>
+                            <p style="margin-bottom:16px;color:var(--text-secondary);">${this.isAdmin ? '🔒 Режим админа' : ''}</p>
                         
                         <div class="feed-actions">
                             <select id="sortOrderSelect" style="width:auto;margin:0;">
@@ -488,8 +484,10 @@
                                 <option value="Buildings">🏗️ Постройки</option>
                                 <option value="Other/Text">📄 Текст / Другое</option>
                             </select>
+                            <input type="text" id="postAuthorInput" placeholder="Ваш никнейм" style="margin:6px 0;padding:10px;border-radius:20px;">
                             <textarea id="postContentTextarea" placeholder="О чём хотите рассказать?" rows="3"></textarea>
                             <input type="file" id="postImageInput" accept="image/*" style="display:none;margin:8px 0;border-radius:12px;" />
+                            <div id="postImagePreview" style="display:none;margin-top:8px;"><img id="postImagePreviewImg" style="max-width:100%;border-radius:12px;display:block;" /></div>
                             <button class="primary" id="publishPostButton">Опубликовать</button>
                         </div>
 
@@ -498,9 +496,25 @@
                         </div>
                     `;
 
-                    document.getElementById('logoutActionButton').addEventListener('click', () => this.handleLogout());
                     document.getElementById('themeToggleButton').addEventListener('click', () => {
                         this.setTheme(this.uiTheme === 'dark' ? 'light' : 'dark');
+                    });
+                    document.getElementById('adminToggleButton').addEventListener('click', async () => {
+                        if (!this.isAdmin) {
+                            const pwd = prompt('Введите админ-пароль (скроется в консоли)');
+                            if (!pwd) return;
+                            const h = await this.computeSHA256(pwd);
+                            if (h === ADMIN_PASSWORD_HASH) {
+                                this.isAdmin = true;
+                                alert('Вход как админ выполнен');
+                                this.render();
+                            } else {
+                                alert('Неверный админ-пароль');
+                            }
+                        } else {
+                            this.isAdmin = false;
+                            this.render();
+                        }
                     });
                     document.getElementById('manualRefreshButton').addEventListener('click', () => {
                         this.initializeDatabase();
@@ -512,12 +526,41 @@
                     });
                     const categorySelect = document.getElementById('postCategorySelect');
                     const imageInput = document.getElementById('postImageInput');
+                    const previewWrapper = document.getElementById('postImagePreview');
+                    const previewImg = document.getElementById('postImagePreviewImg');
                     function updateImageInputVisibility() {
                         if (!imageInput) return;
-                        imageInput.style.display = (categorySelect.value === 'Other/Text') ? 'none' : 'block';
+                        const show = (categorySelect.value === 'Other/Text') ? false : true;
+                        imageInput.style.display = show ? 'block' : 'none';
+                        if (!show) {
+                            if (imageInput) imageInput.value = '';
+                            if (previewWrapper) previewWrapper.style.display = 'none';
+                        }
                     }
                     updateImageInputVisibility();
                     categorySelect.addEventListener('change', updateImageInputVisibility);
+                    if (imageInput) {
+                        imageInput.addEventListener('change', (e) => {
+                            const f = imageInput.files && imageInput.files[0];
+                            if (!f) { if (previewWrapper) previewWrapper.style.display = 'none'; return; }
+                            const maxSize = 5 * 1024 * 1024; // 5 MB
+                            if (f.size > maxSize) {
+                                alert('Файл слишком большой — максимум 5 МБ');
+                                imageInput.value = '';
+                                if (previewWrapper) previewWrapper.style.display = 'none';
+                                return;
+                            }
+                            const reader = new FileReader();
+                            reader.onload = () => {
+                                if (previewImg) previewImg.src = reader.result;
+                                if (previewWrapper) previewWrapper.style.display = 'block';
+                            };
+                            reader.onerror = () => {
+                                if (previewWrapper) previewWrapper.style.display = 'none';
+                            };
+                            reader.readAsDataURL(f);
+                        });
+                    }
                     document.getElementById('publishPostButton').addEventListener('click', () => this.createNewPost());
                     if (isUserAdmin) {
                         document.getElementById('syncFileSystemButton').addEventListener('click', () => this.syncWithFileSystem());
@@ -529,6 +572,11 @@
                 async createNewPost() {
                     const category = document.getElementById('postCategorySelect').value;
                     const content = document.getElementById('postContentTextarea').value.trim();
+                    const author = (document.getElementById('postAuthorInput') || {}).value?.trim();
+                    if (!author) {
+                        alert('Введите никнейм автора поста');
+                        return;
+                    }
                     if (!content) {
                         alert('Введите текст поста');
                         return;
@@ -552,7 +600,7 @@
 
                     const newPost = {
                         id: Date.now() + '-' + Math.random().toString(36).substring(2, 9),
-                        author: this.currentUser.nickname,
+                        author: author,
                         category: category,
                         content: content,
                         image: imageData,
@@ -564,6 +612,7 @@
                     this.persistDatabase();
                     document.getElementById('postContentTextarea').value = '';
                     const fi = document.getElementById('postImageInput'); if (fi) fi.value = '';
+                    const pa = document.getElementById('postAuthorInput'); if (pa) pa.value = '';
                     this.renderFeed();
                 }
 
@@ -584,7 +633,12 @@
                 voteForPost(postId, delta) {
                     const post = this.database.posts.find(p => p.id === postId);
                     if (!post) return;
-                    const voter = this.currentUser.nickname;
+                    let voter = sessionStorage.getItem('cg_nickname');
+                    if (!voter) {
+                        voter = prompt('Введите ник для голосования');
+                        if (!voter) return;
+                        sessionStorage.setItem('cg_nickname', voter);
+                    }
                     const currentVote = post.votedBy[voter] || 0;
                     
                     if (currentVote === delta) {
@@ -602,11 +656,17 @@
                     const inputField = document.querySelector(`[data-comment-input="${postId}"]`);
                     const commentText = inputField.value.trim();
                     if (!commentText) return;
+                    let author = sessionStorage.getItem('cg_nickname');
+                    if (!author) {
+                        author = prompt('Введите никнейм для комментария');
+                        if (!author) return;
+                        sessionStorage.setItem('cg_nickname', author);
+                    }
 
                     const newComment = {
                         id: Date.now() + '-' + Math.random().toString(36).substring(2, 9),
                         postId: postId,
-                        author: this.currentUser.nickname,
+                        author: author,
                         text: commentText,
                         timestamp: Date.now()
                     };
@@ -634,12 +694,12 @@
                         postsToDisplay.sort((a, b) => b.rating - a.rating);
                     }
 
-                    const isAdmin = this.currentUser.role === 'admin';
+                    const isAdmin = this.isAdmin;
                     
                     feedContainer.innerHTML = postsToDisplay.map(post => {
                         const postComments = this.database.comments.filter(c => c.postId === post.id);
                         const postDate = new Date(post.timestamp).toLocaleString('ru-RU');
-                        const userVote = post.votedBy[this.currentUser.nickname] || 0;
+                        const userVote = post.votedBy[sessionStorage.getItem('cg_nickname')] || 0;
                         
                         return `
                             <div class="card" data-post-id="${post.id}">
