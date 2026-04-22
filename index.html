@@ -189,12 +189,16 @@
     <div id="applicationRoot" class="app-container"></div>
     <script>
         (function(){
-            const tg = window.Telegram?.WebApp;
+            const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
             if (tg) {
-                tg.expand();
-                tg.ready();
-                tg.setHeaderColor('#2b2b2b');
-                tg.setBackgroundColor('#1e1e1e');
+                try {
+                    tg.expand();
+                    tg.ready();
+                    if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#2b2b2b');
+                    if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#1e1e1e');
+                } catch (e) {
+                    console.warn('Telegram WebApp init failed', e);
+                }
             }
 
             const ADMIN_NICKNAME_HASH = '459998e3d24d2f494fb63c5c108eeb5241658cc9daf6bce106afa2b9b9a42a02';
@@ -265,15 +269,28 @@
                 async syncWithFileSystem() {
                     if (!this.isAdmin) return;
                     try {
-                        if (!this.fileSystemHandle) {
-                            this.fileSystemHandle = await window.showSaveFilePicker({
-                                suggestedName: 'chicken_gun_database.json',
-                                types: [{ description: 'JSON Database', accept: { 'application/json': ['.json'] } }]
-                            });
-                        }
-                        const writableStream = await this.fileSystemHandle.createWritable();
-                        await writableStream.write(JSON.stringify(this.database, null, 2));
-                        await writableStream.close();
+                                if (typeof window.showSaveFilePicker === 'function') {
+                                    if (!this.fileSystemHandle) {
+                                        this.fileSystemHandle = await window.showSaveFilePicker({
+                                            suggestedName: 'chicken_gun_database.json',
+                                            types: [{ description: 'JSON Database', accept: { 'application/json': ['.json'] } }]
+                                        });
+                                    }
+                                    const writableStream = await this.fileSystemHandle.createWritable();
+                                    await writableStream.write(JSON.stringify(this.database, null, 2));
+                                    await writableStream.close();
+                                } else {
+                                    // Fallback: download JSON file
+                                    const blob = new Blob([JSON.stringify(this.database, null, 2)], { type: 'application/json' });
+                                    const url = URL.createObjectURL(blob);
+                                    const a = document.createElement('a');
+                                    a.href = url;
+                                    a.download = 'chicken_gun_database.json';
+                                    document.body.appendChild(a);
+                                    a.click();
+                                    a.remove();
+                                    URL.revokeObjectURL(url);
+                                }
                     } catch (error) {
                         console.warn('File sync skipped or failed');
                     }
