@@ -186,23 +186,6 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <div id="debugPanel" style="position:fixed;right:12px;top:12px;z-index:9999;max-width:320px;background:rgba(0,0,0,0.6);padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);font-size:12px;color:var(--text-secondary);">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;">
-            <strong style="color:var(--text-primary);font-size:13px;">Debug</strong>
-            <button id="debugToggleBtn" style="padding:6px 8px;border-radius:8px;">hide</button>
-        </div>
-        <div id="debugContent">
-            <div id="dbg_origin"></div>
-            <div id="dbg_referrer"></div>
-            <div id="dbg_ua"></div>
-            <div id="dbg_tg"></div>
-            <div id="dbg_local" style="margin-top:6px;word-break:break-all;"></div>
-            <div style="margin-top:8px;display:flex;gap:6px;">
-                <button id="dbg_reload" style="padding:6px 8px;border-radius:8px;">Reload</button>
-                <button id="dbg_sync" style="padding:6px 8px;border-radius:8px;">Sync from remote</button>
-            </div>
-        </div>
-    </div>
     <div id="applicationRoot" class="app-container"></div>
     <script>
         (function(){
@@ -551,8 +534,7 @@
                         }
                     });
                     document.getElementById('manualRefreshButton').addEventListener('click', () => {
-                        this.initializeDatabase();
-                        this.renderFeed();
+                        this.syncFromRemote();
                     });
                     document.getElementById('sortOrderSelect').addEventListener('change', (e) => {
                         this.activeSortMode = e.target.value;
@@ -602,6 +584,28 @@
                     
                     this.renderFeed();
                 }
+
+                    async syncFromRemote() {
+                        // Build base path robustly: remove trailing index.html or ensure trailing slash
+                        let basePath = location.pathname;
+                        if (basePath.endsWith('index.html')) basePath = basePath.replace(/index\.html$/, '');
+                        if (!basePath.endsWith('/')) basePath += '/';
+                        const url = `${location.origin}${basePath}database.json?cb=${Date.now()}`;
+                        try {
+                            const r = await fetch(url, { cache: 'no-store' });
+                            if (!r.ok) {
+                                alert('Remote DB not found: ' + r.status);
+                                return;
+                            }
+                            const j = await r.json();
+                            try { localStorage.setItem(STORAGE_KEYS.DATABASE, JSON.stringify(j)); } catch (e) { console.warn('Failed to write localStorage', e); }
+                            this.initializeDatabase();
+                            this.renderFeed();
+                            alert('Синхронизировано с удалённой базой');
+                        } catch (e) {
+                            alert('Sync failed: ' + e);
+                        }
+                    }
 
                 async createNewPost() {
                     const category = document.getElementById('postCategorySelect').value;
@@ -818,44 +822,6 @@
 
             const rootElement = document.getElementById('applicationRoot');
             window.appInstance = new ChickenGunPortal(rootElement);
-            // Debug helpers
-            function safeGet(key){try{return localStorage.getItem(key)}catch(e){return 'err'}}
-            function updateDebug(){
-                document.getElementById('dbg_origin').textContent = 'Origin: ' + location.origin + location.pathname;
-                document.getElementById('dbg_referrer').textContent = 'Referrer: ' + document.referrer;
-                document.getElementById('dbg_ua').textContent = 'UA: ' + navigator.userAgent;
-                document.getElementById('dbg_tg').textContent = 'Telegram WebApp: ' + (window.Telegram && window.Telegram.WebApp ? 'yes' : 'no');
-                document.getElementById('dbg_local').textContent = 'LS DB: ' + (safeGet(STORAGE_KEYS.DATABASE) ? 'present' : 'empty') + '\nUSERS: ' + (safeGet(STORAGE_KEYS.USERS) ? 'present' : 'empty') + '\nSESSION: ' + (safeGet(STORAGE_KEYS.SESSION) ? 'present' : 'empty');
-            }
-            updateDebug();
-
-            document.getElementById('debugToggleBtn').addEventListener('click', ()=>{
-                const c = document.getElementById('debugContent');
-                if (c.style.display === 'none') { c.style.display = 'block'; document.getElementById('debugToggleBtn').textContent = 'hide'; }
-                else { c.style.display = 'none'; document.getElementById('debugToggleBtn').textContent = 'show'; }
-            });
-
-            document.getElementById('dbg_reload').addEventListener('click', ()=>{ location.reload(); });
-
-            document.getElementById('dbg_sync').addEventListener('click', async ()=>{
-                // Build base path robustly: remove trailing index.html or ensure trailing slash
-                let basePath = location.pathname;
-                if (basePath.endsWith('index.html')) basePath = basePath.replace(/index\.html$/, '');
-                if (!basePath.endsWith('/')) basePath += '/';
-                const url = `${location.origin}${basePath}database.json?cb=${Date.now()}`;
-                try{
-                    const r = await fetch(url, {cache:'no-store'});
-                    if (!r.ok) { alert('Remote DB not found: ' + r.status); return; }
-                    const j = await r.json();
-                    localStorage.setItem(STORAGE_KEYS.DATABASE, JSON.stringify(j));
-                    alert('Synced from remote');
-                    updateDebug();
-                    if (window.appInstance && typeof window.appInstance.initializeDatabase === 'function'){
-                        window.appInstance.initializeDatabase();
-                        window.appInstance.renderFeed();
-                    }
-                }catch(e){ alert('Sync failed: '+e); }
-            });
         })();
     </script>
 </body>
