@@ -2,951 +2,169 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CG Сообщество | Chicken Gun</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Технические работы</title>
     <style>
-        :root {
-            --bg-dark: #1e1e1e;
-            --bg-panel: #2b2b2b;
-            --bg-element: #414141;
-            --border-light: #444444;
-            --text-primary: #f0f0f0;
-            --text-secondary: #b0b0b0;
-            --accent: #a6885e;
-            --danger: #d9534f;
-            --success: #5cb85c;
-            --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            --border-radius: 16px;
-        }
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
         }
+
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-primary);
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a1a;
+            color: #e0e0e0;
             min-height: 100vh;
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             justify-content: center;
-            padding: 12px 8px;
-            margin: 0;
-            -webkit-tap-highlight-color: transparent;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        body.light {
-            --bg-dark: #f5f5f7;
-            --bg-panel: #ffffffcc;
-            --bg-element: #e9e9ef;
-            --border-light: #c6c6c8;
-            --text-primary: #1c1c1e;
-            --text-secondary: #3a3a3c;
-            --shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-        }
-        .app-container {
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px 16px;
-            border-radius: 28px;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            background: var(--bg-panel);
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-light);
-            transition: all 0.3s ease;
-            animation: fadeIn 0.25s ease-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        h1, h2, h3 {
-            font-weight: 600;
-            letter-spacing: -0.02em;
-            margin-bottom: 16px;
-            color: var(--text-primary);
-        }
-        button, .btn {
-            background: var(--bg-element);
-            border: 1px solid var(--border-light);
-            color: var(--text-primary);
-            padding: 12px 20px;
-            border-radius: 40px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            width: fit-content;
-        }
-        button:hover {
-            transform: scale(1.02);
-            background: var(--border-light);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        }
-        button.primary {
-            background: var(--accent);
-            border-color: #8b7355;
-            color: white;
-            font-weight: 600;
-        }
-        button.danger {
-            background: var(--danger);
-            border-color: #b52b27;
-            color: white;
-        }
-        input, textarea, select {
-            width: 100%;
-            padding: 14px 18px;
-            margin: 8px 0 16px;
-            border-radius: 40px;
-            border: 1px solid var(--border-light);
-            background: var(--bg-element);
-            color: var(--text-primary);
-            font-size: 16px;
-            outline: none;
-            transition: border 0.3s, box-shadow 0.3s;
-        }
-        input:focus, textarea:focus, select:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(166, 136, 94, 0.3);
-        }
-        .card {
-            background: var(--bg-element);
-            border-radius: var(--border-radius);
-            padding: 16px;
-            margin-bottom: 18px;
-            border: 1px solid var(--border-light);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            transition: transform 0.2s, box-shadow 0.3s;
-            animation: fadeIn 0.2s;
-        }
-        .card:hover {
-            transform: scale(1.01);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-        .feed-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 16px 0;
-            align-items: center;
-        }
-        .badge {
-            background: var(--accent);
-            padding: 6px 12px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 600;
-            color: white;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .flex-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .auth-switch {
-            margin-top: 20px;
-            text-align: center;
-        }
-        .link {
-            color: var(--accent);
-            text-decoration: underline;
-            cursor: pointer;
-            font-weight: 500;
-        }
-        .header {
-            margin-bottom: 20px;
-        }
-        .comment-section {
-            margin-top: 16px;
-            padding-top: 12px;
-            border-top: 1px solid var(--border-light);
-        }
-        @media (max-width: 480px) {
-            .app-container { padding: 16px 12px; }
-            button { padding: 10px 16px; }
-        }
-        .message-area {
-            min-height: 24px;
-            margin: 8px 0;
-            font-size: 14px;
-        }
-        .drag-drop-zone {
-            border: 2px dashed var(--border-light);
-            border-radius: 12px;
             padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: var(--bg-element);
-            margin: 8px 0 16px;
         }
-        .drag-drop-zone.dragover {
-            border-color: var(--accent);
-            background: rgba(166, 136, 94, 0.15);
-            transform: scale(1.02);
-        }
-        .image-preview-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 8px;
-            margin: 12px 0;
-        }
-        .image-preview-item {
-            position: relative;
-            border-radius: 8px;
-            overflow: hidden;
-            aspect-ratio: 1;
-        }
-        .image-preview-item img {
+
+        .maintenance-card {
+            background: #242424;
+            border-radius: 24px;
+            padding: 48px 32px;
+            max-width: 480px;
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            text-align: center;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid #3a3a3a;
+            animation: fadeIn 0.3s ease-out;
         }
-        .image-preview-item .remove-image {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            padding: 0;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .icon {
+            font-size: 64px;
+            margin-bottom: 24px;
+            opacity: 0.8;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #a0a0a0;
+            margin-bottom: 32px;
+        }
+
+        .telegram-link {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
+            gap: 8px;
+            background: #2b5278;
+            color: white;
+            text-decoration: none;
+            padding: 14px 28px;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            border: 1px solid #3a6a9e;
         }
-        .image-preview-item .remove-image:hover {
-            background: rgba(0,0,0,0.9);
+
+        .telegram-link:hover {
+            background: #356694;
+            transform: scale(1.02);
+            box-shadow: 0 6px 16px rgba(43, 82, 120, 0.3);
         }
-        .image-count {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 8px;
+
+        .telegram-link:active {
+            transform: scale(0.98);
+        }
+
+        .footer {
+            margin-top: 24px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* Светлая тема (автоматически) */
+        @media (prefers-color-scheme: light) {
+            body {
+                background: #f0f2f5;
+                color: #1a1a1a;
+            }
+
+            .maintenance-card {
+                background: #ffffff;
+                border-color: #d0d0d0;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            }
+
+            h1 {
+                color: #1a1a1a;
+            }
+
+            p {
+                color: #555555;
+            }
+
+            .footer {
+                color: #999;
+            }
+        }
+
+        /* Адаптив для мобильных */
+        @media (max-width: 480px) {
+            .maintenance-card {
+                padding: 36px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .icon {
+                font-size: 56px;
+            }
+
+            .telegram-link {
+                padding: 12px 20px;
+                font-size: 15px;
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <div id="applicationRoot" class="app-container"></div>
-    <script>
-        (function(){
-            const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
-            if (tg) {
-                try {
-                    tg.expand();
-                    tg.ready();
-                    if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#2b2b2b');
-                    if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#1e1e1e');
-                } catch (e) {
-                    console.warn('Telegram WebApp init failed', e);
-                }
-            }
-
-            const ADMIN_NICKNAME_HASH = '459998e3d24d2f494fb63c5c108eeb5241658cc9daf6bce106afa2b9b9a42a02';
-            const ADMIN_PASSWORD_HASH = '84bae3df73e27cbbe45c1bd2517c2d229d046acd62d45628d8d9ae7c0b2d6b59';
-
-            const STORAGE_KEYS = {
-                USERS: 'cg_users_registry',
-                DATABASE: 'cg_main_database',
-                SESSION: 'cg_current_session',
-                THEME: 'cg_ui_theme'
-            };
-
-            class ChickenGunPortal {
-                constructor(rootElement) {
-                    this.root = rootElement;
-                    this.database = { posts: [], comments: [] };
-                    this.fileSystemHandle = null;
-                    this.activeSortMode = 'newest';
-                    this.uiTheme = localStorage.getItem(STORAGE_KEYS.THEME) || 'dark';
-                    this.isAdmin = false; // session-only admin flag
-                    this.applyTheme();
-                    this.initializeDatabase();
-                    this.render();
-                }
-
-                async computeSHA256(inputString) {
-                    const encoder = new TextEncoder();
-                    const data = encoder.encode(inputString);
-                    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-                    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-                }
-
-                initializeDatabase() {
-                    const savedDatabase = localStorage.getItem(STORAGE_KEYS.DATABASE);
-                    if (savedDatabase) {
-                        try { this.database = JSON.parse(savedDatabase); } catch (e) { this.database = { posts: [], comments: [] }; }
-                    } else {
-                        this.database = { posts: [], comments: [] };
-                    }
-                    let usersRegistry = localStorage.getItem(STORAGE_KEYS.USERS);
-                    if (!usersRegistry) {
-                        const defaultAdminUser = {};
-                        defaultAdminUser[ADMIN_NICKNAME_HASH] = { passwordHash: ADMIN_PASSWORD_HASH, role: 'admin' };
-                        localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(defaultAdminUser));
-                    } else {
-                        const users = JSON.parse(usersRegistry);
-                        // Migrate old admin key and update password
-                        if (users['hwbwcs']) {
-                            users[ADMIN_NICKNAME_HASH] = { passwordHash: ADMIN_PASSWORD_HASH, role: 'admin' };
-                            delete users['hwbwcs'];
-                            localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
-                        }
-                    }
-                }
-
-                restoreSession() {
-                    const sessionData = localStorage.getItem(STORAGE_KEYS.SESSION);
-                    if (sessionData) {
-                        try { this.currentUser = JSON.parse(sessionData); } catch (e) { this.currentUser = null; }
-                    }
-                }
-
-                persistDatabase() {
-                    localStorage.setItem(STORAGE_KEYS.DATABASE, JSON.stringify(this.database));
-                    this.syncWithFileSystem();
-                }
-
-                async syncWithFileSystem() {
-                    if (!this.isAdmin) return;
-                    try {
-                                if (typeof window.showSaveFilePicker === 'function') {
-                                    if (!this.fileSystemHandle) {
-                                        this.fileSystemHandle = await window.showSaveFilePicker({
-                                            suggestedName: 'chicken_gun_database.json',
-                                            types: [{ description: 'JSON Database', accept: { 'application/json': ['.json'] } }]
-                                        });
-                                    }
-                                    const writableStream = await this.fileSystemHandle.createWritable();
-                                    await writableStream.write(JSON.stringify(this.database, null, 2));
-                                    await writableStream.close();
-                                } else {
-                                    // Fallback: download JSON file
-                                    const blob = new Blob([JSON.stringify(this.database, null, 2)], { type: 'application/json' });
-                                    const url = URL.createObjectURL(blob);
-                                    const a = document.createElement('a');
-                                    a.href = url;
-                                    a.download = 'chicken_gun_database.json';
-                                    document.body.appendChild(a);
-                                    a.click();
-                                    a.remove();
-                                    URL.revokeObjectURL(url);
-                                }
-                    } catch (error) {
-                        console.warn('File sync skipped or failed');
-                    }
-                }
-
-                applyTheme() {
-                    if (this.uiTheme === 'light') document.body.classList.add('light');
-                    else if (this.uiTheme === 'dark') document.body.classList.remove('light');
-                    else {
-                        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                        prefersDark ? document.body.classList.remove('light') : document.body.classList.add('light');
-                    }
-                }
-
-                setTheme(newTheme) {
-                    this.uiTheme = newTheme;
-                    localStorage.setItem(STORAGE_KEYS.THEME, newTheme);
-                    this.applyTheme();
-                    this.render();
-                }
-
-                render() {
-                    // No registration/login flow: always show main interface.
-                    this.renderMainInterface();
-                }
-
-                renderAuthenticationScreen() {
-                    this.root.innerHTML = `
-                        <div>
-                            <h2 style="text-align:center;">🐔 CG Сообщество</h2>
-                            <p style="text-align:center;color:var(--text-secondary);margin-bottom:24px;">Chicken Gun Portal</p>
-                            <div id="authFormContainer"></div>
-                            <div id="authModeSwitcher" class="auth-switch"></div>
-                            <div id="globalMessage" class="message-area" style="text-align:center;"></div>
-                        </div>
-                    `;
-                    this.displayLoginForm();
-                }
-
-                displayLoginForm() {
-                    const container = document.getElementById('authFormContainer');
-                    const switcher = document.getElementById('authModeSwitcher');
-                    container.innerHTML = `
-                        <input type="text" id="loginNicknameInput" placeholder="Никнейм" autocomplete="off">
-                        <input type="password" id="loginPasswordInput" placeholder="Пароль">
-                        <div class="flex-row">
-                            <label style="display:flex;align-items:center;gap:8px;">
-                                <input type="checkbox" id="rememberMeCheckbox"> Запомнить меня
-                            </label>
-                            <button class="primary" id="performLoginButton">Войти</button>
-                        </div>
-                    `;
-                    switcher.innerHTML = `Нет аккаунта? <span class="link" id="switchToRegisterLink">Создать</span>`;
-                    
-                    document.getElementById('performLoginButton').addEventListener('click', () => this.handleLogin());
-                    document.getElementById('switchToRegisterLink').addEventListener('click', () => this.displayRegistrationForm());
-                    document.getElementById('loginPasswordInput').addEventListener('keypress', (e) => {
-                        if (e.key === 'Enter') this.handleLogin();
-                    });
-                }
-
-                displayRegistrationForm() {
-                    const container = document.getElementById('authFormContainer');
-                    const switcher = document.getElementById('authModeSwitcher');
-                    container.innerHTML = `
-                        <input type="text" id="regNicknameInput" placeholder="Придумайте никнейм">
-                        <input type="password" id="regPasswordInput" placeholder="Пароль">
-                        <button class="primary" id="performRegisterButton">Зарегистрироваться</button>
-                    `;
-                    switcher.innerHTML = `Уже есть аккаунт? <span class="link" id="switchToLoginLink">Войти</span>`;
-                    
-                    document.getElementById('performRegisterButton').addEventListener('click', () => this.handleRegistration());
-                    document.getElementById('switchToLoginLink').addEventListener('click', () => this.displayLoginForm());
-                }
-
-                async handleRegistration() {
-                    const nickname = document.getElementById('regNicknameInput')?.value.trim();
-                    const password = document.getElementById('regPasswordInput')?.value;
-                    const messageEl = document.getElementById('globalMessage');
-                    
-                    if (!nickname || !password) {
-                        messageEl.textContent = 'Заполните все поля';
-                        messageEl.style.color = 'var(--danger)';
-                        return;
-                    }
-                    if (password.length < 4) {
-                        messageEl.textContent = 'Пароль должен быть не менее 4 символов';
-                        messageEl.style.color = 'var(--danger)';
-                        return;
-                    }
-
-                    const hashedNickname = await this.computeSHA256(nickname);
-                    const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS) || '{}');
-                    if (users[hashedNickname]) {
-                        messageEl.textContent = 'Этот никнейм уже занят';
-                        messageEl.style.color = 'var(--danger)';
-                        return;
-                    }
-
-                    const passwordHash = await this.computeSHA256(password);
-                    users[hashedNickname] = { passwordHash, role: hashedNickname === ADMIN_NICKNAME_HASH ? 'admin' : 'user' };
-                    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
-                    
-                    messageEl.textContent = 'Регистрация успешна! Теперь войдите.';
-                    messageEl.style.color = 'var(--success)';
-                    this.displayLoginForm();
-                }
-
-                async handleLogin() {
-                    const nickname = document.getElementById('loginNicknameInput')?.value.trim();
-                    const password = document.getElementById('loginPasswordInput')?.value;
-                    const rememberMe = document.getElementById('rememberMeCheckbox')?.checked;
-                    const messageEl = document.getElementById('globalMessage');
-
-                    if (!nickname || !password) {
-                        messageEl.textContent = 'Введите никнейм и пароль';
-                        messageEl.style.color = 'var(--danger)';
-                        return;
-                    }
-
-                    const hashedNickname = await this.computeSHA256(nickname);
-                    const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS) || '{}');
-                    let userRecord = users[hashedNickname];
-
-                    // If not found by hashed key, check legacy plain-key entry and migrate it.
-                    if (!userRecord && users[nickname]) {
-                        const legacy = users[nickname];
-                        // If legacy stores plaintext password under 'password' or 'pwd', normalize it.
-                        if (legacy.password && typeof legacy.password === 'string') {
-                            const legacyPlain = legacy.password;
-                            const legacyHash = await this.computeSHA256(legacyPlain);
-                            legacy.passwordHash = legacyHash;
-                            delete legacy.password;
-                        }
-                        // Move to hashed key
-                        users[hashedNickname] = legacy;
-                        delete users[nickname];
-                        localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
-                        userRecord = users[hashedNickname];
-                    }
-
-                    if (!userRecord) {
-                        messageEl.textContent = 'Пользователь не найден';
-                        messageEl.style.color = 'var(--danger)';
-                        return;
-                    }
-
-                    const inputHash = await this.computeSHA256(password);
-
-                    // If stored password is plaintext (very old format), upgrade it.
-                    if (!userRecord.passwordHash && userRecord.password && password === userRecord.password) {
-                        userRecord.passwordHash = inputHash;
-                        delete userRecord.password;
-                        users[hashedNickname] = userRecord;
-                        localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
-                    }
-
-                    if (inputHash !== userRecord.passwordHash) {
-                        messageEl.textContent = 'Неверный пароль';
-                        messageEl.style.color = 'var(--danger)';
-                        return;
-                    }
-
-                    this.currentUser = { nickname, role: userRecord.role };
-                    if (rememberMe) {
-                        localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(this.currentUser));
-                    } else {
-                        sessionStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(this.currentUser));
-                    }
-                    this.render();
-                }
-
-                handleLogout() {
-                    this.currentUser = null;
-                    localStorage.removeItem(STORAGE_KEYS.SESSION);
-                    sessionStorage.removeItem(STORAGE_KEYS.SESSION);
-                    this.render();
-                }
-
-
-                renderMainInterface() {
-                    const isUserAdmin = this.isAdmin;
-                    this.root.innerHTML = `
-                        <div class="header flex-row">
-                            <h1>🐔 CG Сообщество</h1>
-                            <div style="display:flex;gap:8px;align-items:center;">
-                                    <button id="themeToggleButton" title="Сменить тему">${this.uiTheme === 'dark' ? '☀️' : '🌙'}</button>
-                                    <button id="adminToggleButton" class="primary">${this.isAdmin ? 'Выйти из админ' : 'Войти как админ'}</button>
-                                </div>
-                            </div>
-                            <p style="margin-bottom:16px;color:var(--text-secondary);">${this.isAdmin ? '🔒 Режим админа' : ''}</p>
-                        
-                        <div class="feed-actions">
-                            <select id="sortOrderSelect" style="width:auto;margin:0;">
-                                <option value="newest" ${this.activeSortMode === 'newest' ? 'selected' : ''}>🆕 Новые</option>
-                                <option value="oldest" ${this.activeSortMode === 'oldest' ? 'selected' : ''}>📅 Старые</option>
-                                <option value="rating" ${this.activeSortMode === 'rating' ? 'selected' : ''}>⭐ По рейтингу</option>
-                            </select>
-                            <button id="manualRefreshButton">🔄 Обновить</button>
-                            ${isUserAdmin ? '<button id="syncFileSystemButton">💾 Синх. с файлом</button>' : ''}
-                        </div>
-
-                        <div class="card">
-                            <h3>📝 Новый пост</h3>
-                            <select id="postCategorySelect">
-                                <option value="Concepts">🎨 Концепты</option>
-                                <option value="Arts">🖼️ Арты</option>
-                                <option value="Buildings">🏗️ Постройки</option>
-                                <option value="Other/Text">📄 Текст / Другое</option>
-                            </select>
-                            <input type="text" id="postAuthorInput" placeholder="Ваш никнейм" style="margin:6px 0;padding:10px;border-radius:20px;">
-                            <textarea id="postContentTextarea" placeholder="О чём хотите рассказать?" rows="3"></textarea>
-                            
-                            <div id="dragDropZone" class="drag-drop-zone" style="display:none;">
-                                <p>📸 Перетащите фото сюда или нажмите для выбора (до 10)</p>
-                                <input type="file" id="postImageInput" multiple accept="image/*" style="display:none;" />
-                            </div>
-                            <div id="postImagePreview" class="image-preview-grid"></div>
-                            <div id="imageCount" class="image-count"></div>
-                            
-                            <button class="primary" id="publishPostButton">Опубликовать</button>
-                        </div>
-
-                        <div id="feedDisplayContainer">
-                            <p style="text-align:center;padding:20px;">Загрузка ленты...</p>
-                        </div>
-                    `;
-
-                    document.getElementById('themeToggleButton').addEventListener('click', () => {
-                        this.setTheme(this.uiTheme === 'dark' ? 'light' : 'dark');
-                    });
-                    document.getElementById('adminToggleButton').addEventListener('click', async () => {
-                        if (!this.isAdmin) {
-                            const pwd = prompt('Введите админ-пароль (скроется в консоли)');
-                            if (!pwd) return;
-                            const h = await this.computeSHA256(pwd);
-                            if (h === ADMIN_PASSWORD_HASH) {
-                                this.isAdmin = true;
-                                alert('Вход как админ выполнен');
-                                this.render();
-                            } else {
-                                alert('Неверный админ-пароль');
-                            }
-                        } else {
-                            this.isAdmin = false;
-                            this.render();
-                        }
-                    });
-                    document.getElementById('manualRefreshButton').addEventListener('click', () => {
-                        this.syncFromRemote();
-                    });
-                    document.getElementById('sortOrderSelect').addEventListener('change', (e) => {
-                        this.activeSortMode = e.target.value;
-                        this.renderFeed();
-                    });
-                    const categorySelect = document.getElementById('postCategorySelect');
-                    const imageInput = document.getElementById('postImageInput');
-                    const dragDropZone = document.getElementById('dragDropZone');
-                    const previewGrid = document.getElementById('postImagePreview');
-                    const imageCountEl = document.getElementById('imageCount');
-                    
-                    // Store selected images as base64
-                    this.selectedImages = [];
-                    const MAX_IMAGES = 10;
-                    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-                    
-                    const updateImageDisplay = () => {
-                        previewGrid.innerHTML = this.selectedImages.map((img, idx) => `
-                            <div class="image-preview-item">
-                                <img src="${img}" alt="Preview ${idx + 1}">
-                                <button class="remove-image" data-index="${idx}">×</button>
-                            </div>
-                        `).join('');
-                        
-                        imageCountEl.textContent = this.selectedImages.length > 0 
-                            ? `${this.selectedImages.length}/${MAX_IMAGES} фото` 
-                            : '';
-                            
-                        document.querySelectorAll('.remove-image').forEach(btn => {
-                            btn.addEventListener('click', (e) => {
-                                e.preventDefault();
-                                const idx = parseInt(btn.dataset.index);
-                                this.selectedImages.splice(idx, 1);
-                                updateImageDisplay();
-                            });
-                        });
-                    };
-                    
-                    const processFiles = async (files) => {
-                        for (const file of files) {
-                            if (this.selectedImages.length >= MAX_IMAGES) {
-                                alert(`Максимум ${MAX_IMAGES} фото в одном посте`);
-                                break;
-                            }
-                            if (!file.type.startsWith('image/')) {
-                                alert('Пожалуйста, выбирайте только изображения');
-                                continue;
-                            }
-                            if (file.size > MAX_FILE_SIZE) {
-                                alert(`${file.name}: файл слишком большой (макс. 5 МБ)`);
-                                continue;
-                            }
-                            try {
-                                const base64 = await new Promise((resolve) => {
-                                    const reader = new FileReader();
-                                    reader.onload = () => resolve(reader.result);
-                                    reader.onerror = () => resolve(null);
-                                    reader.readAsDataURL(file);
-                                });
-                                if (base64) this.selectedImages.push(base64);
-                            } catch (e) {
-                                console.error('File processing error:', e);
-                            }
-                        }
-                        updateImageDisplay();
-                    };
-                    
-                    function updateCategoryVisibility() {
-                        if (!categorySelect || !dragDropZone) return;
-                        const showImages = categorySelect.value !== 'Other/Text';
-                        dragDropZone.style.display = showImages ? 'block' : 'none';
-                        if (!showImages) {
-                            this.selectedImages = [];
-                            updateImageDisplay();
-                        }
-                    }
-                    updateCategoryVisibility.call(this);
-                    categorySelect.addEventListener('change', updateCategoryVisibility.bind(this));
-                    
-                    // Drag & Drop handlers
-                    dragDropZone.addEventListener('dragover', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        dragDropZone.classList.add('dragover');
-                    });
-                    dragDropZone.addEventListener('dragleave', (e) => {
-                        e.preventDefault();
-                        dragDropZone.classList.remove('dragover');
-                    });
-                    dragDropZone.addEventListener('drop', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        dragDropZone.classList.remove('dragover');
-                        const files = e.dataTransfer.files;
-                        if (files) processFiles(files);
-                    });
-                    dragDropZone.addEventListener('click', () => {
-                        if (imageInput) imageInput.click();
-                    });
-                    
-                    if (imageInput) {
-                        imageInput.addEventListener('change', (e) => {
-                            if (e.target.files) processFiles(e.target.files);
-                        });
-                    }
-                    
-                    document.getElementById('publishPostButton').addEventListener('click', () => this.createNewPost());
-                    if (isUserAdmin) {
-                        document.getElementById('syncFileSystemButton').addEventListener('click', () => this.syncWithFileSystem());
-                    }
-                    
-                    this.renderFeed();
-                }
-
-                    async syncFromRemote() {
-                        // Build base path robustly: remove trailing index.html or ensure trailing slash
-                        let basePath = location.pathname;
-                        if (basePath.endsWith('index.html')) basePath = basePath.replace(/index\.html$/, '');
-                        if (!basePath.endsWith('/')) basePath += '/';
-                        const url = `${location.origin}${basePath}database.json?cb=${Date.now()}`;
-                        try {
-                            const r = await fetch(url, { cache: 'no-store' });
-                            if (!r.ok) {
-                                alert('Remote DB not found: ' + r.status);
-                                return;
-                            }
-                            const j = await r.json();
-                            try { localStorage.setItem(STORAGE_KEYS.DATABASE, JSON.stringify(j)); } catch (e) { console.warn('Failed to write localStorage', e); }
-                            this.initializeDatabase();
-                            this.renderFeed();
-                            alert('Синхронизировано с удалённой базой');
-                        } catch (e) {
-                            alert('Sync failed: ' + e);
-                        }
-                    }
-
-                async createNewPost() {
-                    const category = document.getElementById('postCategorySelect').value;
-                    const content = document.getElementById('postContentTextarea').value.trim();
-                    const author = (document.getElementById('postAuthorInput') || {}).value?.trim();
-                    if (!author) {
-                        alert('Введите никнейм автора поста');
-                        return;
-                    }
-                    if (!content) {
-                        alert('Введите текст поста');
-                        return;
-                    }
-
-                    let images = [];
-                    // Only accept images for categories other than Other/Text
-                    if (category !== 'Other/Text' && this.selectedImages && this.selectedImages.length > 0) {
-                        images = [...this.selectedImages];
-                    }
-
-                    const newPost = {
-                        id: Date.now() + '-' + Math.random().toString(36).substring(2, 9),
-                        author: author,
-                        category: category,
-                        content: content,
-                        images: images,
-                        timestamp: Date.now(),
-                        rating: 0,
-                        votedBy: {}
-                    };
-                    this.database.posts.push(newPost);
-                    this.persistDatabase();
-                    document.getElementById('postContentTextarea').value = '';
-                    const fi = document.getElementById('postImageInput'); if (fi) fi.value = '';
-                    const pa = document.getElementById('postAuthorInput'); if (pa) pa.value = '';
-                    this.selectedImages = [];
-                    document.getElementById('postImagePreview').innerHTML = '';
-                    document.getElementById('imageCount').textContent = '';
-                    this.renderFeed();
-                }
-
-                deletePostById(postId) {
-                    if (!confirm('Удалить этот пост?')) return;
-                    this.database.posts = this.database.posts.filter(p => p.id !== postId);
-                    this.database.comments = this.database.comments.filter(c => c.postId !== postId);
-                    this.persistDatabase();
-                    this.renderFeed();
-                }
-
-                deleteCommentById(commentId) {
-                    this.database.comments = this.database.comments.filter(c => c.id !== commentId);
-                    this.persistDatabase();
-                    this.renderFeed();
-                }
-
-                voteForPost(postId, delta) {
-                    const post = this.database.posts.find(p => p.id === postId);
-                    if (!post) return;
-                    let voter = sessionStorage.getItem('cg_nickname');
-                    if (!voter) {
-                        voter = prompt('Введите ник для голосования');
-                        if (!voter) return;
-                        sessionStorage.setItem('cg_nickname', voter);
-                    }
-                    const currentVote = post.votedBy[voter] || 0;
-                    
-                    if (currentVote === delta) {
-                        delete post.votedBy[voter];
-                        post.rating -= delta;
-                    } else {
-                        post.rating = post.rating - currentVote + delta;
-                        post.votedBy[voter] = delta;
-                    }
-                    this.persistDatabase();
-                    this.renderFeed();
-                }
-
-                addCommentToPost(postId) {
-                    const inputField = document.querySelector(`[data-comment-input="${postId}"]`);
-                    const commentText = inputField.value.trim();
-                    if (!commentText) return;
-                    let author = sessionStorage.getItem('cg_nickname');
-                    if (!author) {
-                        author = prompt('Введите никнейм для комментария');
-                        if (!author) return;
-                        sessionStorage.setItem('cg_nickname', author);
-                    }
-
-                    const newComment = {
-                        id: Date.now() + '-' + Math.random().toString(36).substring(2, 9),
-                        postId: postId,
-                        author: author,
-                        text: commentText,
-                        timestamp: Date.now()
-                    };
-                    this.database.comments.push(newComment);
-                    this.persistDatabase();
-                    this.renderFeed();
-                }
-
-                renderFeed() {
-                    const feedContainer = document.getElementById('feedDisplayContainer');
-                    if (!feedContainer) return;
-
-                    let postsToDisplay = [...this.database.posts];
-                    
-                    if (postsToDisplay.length === 0) {
-                        feedContainer.innerHTML = '<p style="text-align:center;padding:40px;color:var(--text-secondary);">Пока нет постов. Создайте первый!</p>';
-                        return;
-                    }
-
-                    if (this.activeSortMode === 'newest') {
-                        postsToDisplay.sort((a, b) => b.timestamp - a.timestamp);
-                    } else if (this.activeSortMode === 'oldest') {
-                        postsToDisplay.sort((a, b) => a.timestamp - b.timestamp);
-                    } else {
-                        postsToDisplay.sort((a, b) => b.rating - a.rating);
-                    }
-
-                    const isAdmin = this.isAdmin;
-                    
-                    feedContainer.innerHTML = postsToDisplay.map(post => {
-                        const postComments = this.database.comments.filter(c => c.postId === post.id);
-                        const postDate = new Date(post.timestamp).toLocaleString('ru-RU');
-                        const userVote = post.votedBy[sessionStorage.getItem('cg_nickname')] || 0;
-                        
-                        return `
-                            <div class="card" data-post-id="${post.id}">
-                                <div class="flex-row">
-                                    <span class="badge">${post.category}</span>
-                                    <span style="color: var(--text-secondary);font-size:14px;">${post.author} • ${postDate}</span>
-                                    ${isAdmin ? `<button class="danger delete-post-button" data-post-id="${post.id}" style="padding:6px 10px;">🗑️</button>` : ''}
-                                </div>
-                                <p style="margin: 12px 0;white-space:pre-wrap;">${post.content}</p>
-                                ${post.images && post.images.length > 0 && post.category !== 'Other/Text' ? `
-                                    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-top:8px;">
-                                        ${post.images.map(img => `<img src="${img}" style="max-width:100%;border-radius:8px;object-fit:cover;aspect-ratio:1;cursor:pointer;" onclick="this.style.maxWidth=this.style.maxWidth==='100%'?'none':'100%';this.style.aspectRatio=this.style.aspectRatio==='1'?'auto':'1';">`).join('')}
-                                    </div>
-                                ` : (post.image && post.category !== 'Other/Text' ? `<img src="${post.image}" style="max-width:100%; border-radius:12px; margin-top:8px;">` : '')}
-                                <div class="flex-row">
-                                    <div style="display:flex;align-items:center;gap:8px;">
-                                        <button class="vote-up-button" data-post-id="${post.id}" style="background:${userVote === 1 ? 'var(--success)' : 'var(--bg-element)'};">👍</button>
-                                        <span style="font-weight:bold;">${post.rating}</span>
-                                        <button class="vote-down-button" data-post-id="${post.id}" style="background:${userVote === -1 ? 'var(--danger)' : 'var(--bg-element)'};">👎</button>
-                                    </div>
-                                    <button class="toggle-comments-button" data-post-id="${post.id}">💬 ${postComments.length} коммент.</button>
-                                </div>
-                                <div id="comments-${post.id}" style="display:none;" class="comment-section">
-                                    ${postComments.map(comment => `
-                                        <div style="background:var(--bg-panel); padding:10px; border-radius:20px; margin-bottom:8px;">
-                                            <div class="flex-row">
-                                                <strong>${comment.author}</strong>
-                                                <span style="font-size:12px;color:var(--text-secondary);">${new Date(comment.timestamp).toLocaleTimeString('ru-RU')}</span>
-                                                ${isAdmin ? `<button class="delete-comment-button" data-comment-id="${comment.id}" style="padding:4px 8px;">🗑️</button>` : ''}
-                                            </div>
-                                            <p style="margin-top:6px;">${comment.text}</p>
-                                        </div>
-                                    `).join('')}
-                                    <div class="flex-row" style="margin-top:12px;">
-                                        <input type="text" data-comment-input="${post.id}" placeholder="Написать комментарий...">
-                                        <button class="send-comment-button" data-post-id="${post.id}">➤</button>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-
-                    document.querySelectorAll('.delete-post-button').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            this.deletePostById(btn.dataset.postId);
-                        });
-                    });
-
-                    document.querySelectorAll('.delete-comment-button').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            this.deleteCommentById(btn.dataset.commentId);
-                        });
-                    });
-
-                    document.querySelectorAll('.vote-up-button').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            this.voteForPost(btn.dataset.postId, 1);
-                        });
-                    });
-
-                    document.querySelectorAll('.vote-down-button').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            this.voteForPost(btn.dataset.postId, -1);
-                        });
-                    });
-
-                    document.querySelectorAll('.toggle-comments-button').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            const section = document.getElementById(`comments-${btn.dataset.postId}`);
-                            section.style.display = section.style.display === 'none' ? 'block' : 'none';
-                        });
-                    });
-
-                    document.querySelectorAll('.send-comment-button').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            this.addCommentToPost(btn.dataset.postId);
-                        });
-                    });
-                }
-            }
-
-            const rootElement = document.getElementById('applicationRoot');
-            window.appInstance = new ChickenGunPortal(rootElement);
-        })();
-    </script>
+    <div class="maintenance-card">
+        <div class="icon">🛠️</div>
+        <h1>Технические работы</h1>
+        <p>
+            Мы проводим плановое обновление системы.<br>
+            Совсем скоро всё заработает снова.
+        </p>
+        
+        <a href="https://t.me/larperchanol" class="telegram-link" target="_blank" rel="noopener noreferrer">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 4px;">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.05-.2-.06-.06-.15-.04-.22-.02-.09.02-1.58 1-4.46 2.95-.42.29-.8.43-1.14.42-.38-.01-1.1-.21-1.64-.39-.66-.21-1.18-.33-1.13-.69.02-.19.29-.38.79-.58 3.06-1.33 5.1-2.21 6.12-2.64 2.91-1.21 3.52-1.42 3.91-1.43.09 0 .28.02.4.12.12.1.15.23.17.33.01.1.02.33 0 .53z"/>
+            </svg>
+            Быть в курсе в Telegram
+        </a>
+        
+        <div class="footer">
+            @larperchanol
+        </div>
+    </div>
 </body>
 </html>
