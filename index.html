@@ -838,7 +838,11 @@
             document.getElementById('dbg_reload').addEventListener('click', ()=>{ location.reload(); });
 
             document.getElementById('dbg_sync').addEventListener('click', async ()=>{
-                const url = `${location.origin}${location.pathname}database.json?cb=${Date.now()}`;
+                // Build base path robustly: remove trailing index.html or ensure trailing slash
+                let basePath = location.pathname;
+                if (basePath.endsWith('index.html')) basePath = basePath.replace(/index\.html$/, '');
+                if (!basePath.endsWith('/')) basePath += '/';
+                const url = `${location.origin}${basePath}database.json?cb=${Date.now()}`;
                 try{
                     const r = await fetch(url, {cache:'no-store'});
                     if (!r.ok) { alert('Remote DB not found: ' + r.status); return; }
